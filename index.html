@@ -63,7 +63,6 @@
     .product-card { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
     .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15); }
     .nav-link.active { color: #0d9488; font-weight: 600; }
-    .sidebar-link.active { background: #f0fdfa; color: #0f766e; border-right: 3px solid #14b8a6; }
     .badge-hot { background: linear-gradient(135deg, #ef4444, #f97316); }
     .badge-new { background: linear-gradient(135deg, #0d9488, #14b8a6); }
     .badge-margin { background: linear-gradient(135deg, #d97706, #f59e0b); }
@@ -116,13 +115,9 @@
           <button onclick="showView('how-it-works')" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 transition">How it Works</button>
           <button onclick="showView('pricing')" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 transition">Pricing</button>
           <button onclick="showView('agency')" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 transition">Agency</button>
-          <button onclick="showView('dashboard')" class="nav-link px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 transition">Dashboard</button>
         </div>
 
         <div class="flex items-center gap-2 sm:gap-3">
-          <button onclick="showView('dashboard')" class="hidden md:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-xl transition">
-            <i class="fas fa-user-circle"></i> Seller Portal
-          </button>
           <button onclick="showView('register')" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-600/25 transition">
             Start Free
           </button>
@@ -139,7 +134,6 @@
         <button onclick="showView('how-it-works');toggleMobileMenu()" class="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-brand-50">How it Works</button>
         <button onclick="showView('pricing');toggleMobileMenu()" class="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-brand-50">Pricing & Fees</button>
         <button onclick="showView('agency');toggleMobileMenu()" class="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-brand-50">Agency Program</button>
-        <button onclick="showView('dashboard');toggleMobileMenu()" class="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-brand-50">Seller Dashboard</button>
         <button onclick="showView('register');toggleMobileMenu()" class="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-bold text-brand-700 bg-brand-50 mt-1">Create Free Account</button>
       </div>
     </div>
@@ -804,171 +798,6 @@
     </div>
   </div>
 
-  <!-- ==================== DASHBOARD ==================== -->
-  <div id="view-dashboard" class="view">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-      <div class="flex flex-col lg:flex-row gap-6">
-        <aside class="lg:w-56 flex-shrink-0">
-          <div class="bg-white rounded-2xl border border-slate-200 p-3 shadow-soft sticky top-24">
-            <div class="px-3 py-3 mb-2 border-b border-slate-100">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold">A</div>
-                <div>
-                  <div class="font-semibold text-sm">Ahmed Al-Rashid</div>
-                  <div class="text-xs text-slate-400">Seller · UAE</div>
-                </div>
-              </div>
-            </div>
-            <nav class="space-y-0.5">
-              <button onclick="setDashTab('overview')" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition" data-tab="overview"><i class="fas fa-chart-pie w-5 text-center"></i> Overview</button>
-              <button onclick="setDashTab('orders')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition" data-tab="orders"><i class="fas fa-shopping-bag w-5 text-center"></i> Orders</button>
-              <button onclick="setDashTab('products')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition" data-tab="products"><i class="fas fa-box w-5 text-center"></i> My Products</button>
-              <button onclick="setDashTab('payouts')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition" data-tab="payouts"><i class="fas fa-wallet w-5 text-center"></i> Payouts</button>
-              <button onclick="setDashTab('stores')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition" data-tab="stores"><i class="fas fa-store w-5 text-center"></i> Stores</button>
-              <button onclick="setDashTab('settings')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition" data-tab="settings"><i class="fas fa-cog w-5 text-center"></i> Settings</button>
-            </nav>
-          </div>
-        </aside>
-        <div class="flex-1 min-w-0">
-          <div id="dash-overview" class="dash-tab">
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-              <div>
-                <h1 class="font-display text-xl font-extrabold text-slate-900">Dashboard Overview</h1>
-                <p class="text-sm text-slate-500">Welcome back · Last 30 days</p>
-              </div>
-              <div class="flex gap-2">
-                <button class="px-3 py-1.5 text-xs font-medium bg-brand-50 text-brand-700 rounded-lg">Last 7 days</button>
-                <button class="px-3 py-1.5 text-xs font-medium bg-slate-100 text-slate-600 rounded-lg">Last 30 days</button>
-              </div>
-            </div>
-            <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-              <div class="stat-card rounded-2xl border border-slate-200 p-5 shadow-soft">
-                <div class="flex items-center justify-between mb-3"><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Net Profit</span><span class="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded font-medium">+18%</span></div>
-                <div class="font-display text-2xl font-extrabold text-slate-900">4,280 AED</div>
-                <div class="text-xs text-slate-400 mt-1">After costs & shipping</div>
-              </div>
-              <div class="stat-card rounded-2xl border border-slate-200 p-5 shadow-soft">
-                <div class="flex items-center justify-between mb-3"><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Orders</span><span class="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded font-medium">+12%</span></div>
-                <div class="font-display text-2xl font-extrabold text-slate-900">147</div>
-                <div class="text-xs text-slate-400 mt-1">112 delivered · 18 pending</div>
-              </div>
-              <div class="stat-card rounded-2xl border border-slate-200 p-5 shadow-soft">
-                <div class="flex items-center justify-between mb-3"><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Delivery Rate</span><span class="text-xs text-green-600 bg-green-50 px-1.5 py-0.5 rounded font-medium">Good</span></div>
-                <div class="font-display text-2xl font-extrabold text-slate-900">81%</div>
-                <div class="text-xs text-slate-400 mt-1">Above platform avg (78%)</div>
-              </div>
-              <div class="stat-card rounded-2xl border border-slate-200 p-5 shadow-soft">
-                <div class="flex items-center justify-between mb-3"><span class="text-xs font-medium text-slate-500 uppercase tracking-wide">Available Balance</span></div>
-                <div class="font-display text-2xl font-extrabold text-brand-700">1,940 AED</div>
-                <div class="text-xs text-slate-400 mt-1">Next payout: Friday</div>
-              </div>
-            </div>
-            <div class="grid lg:grid-cols-5 gap-5">
-              <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-soft">
-                <h3 class="font-semibold text-sm mb-4">Order Status Breakdown</h3>
-                <div class="space-y-3">
-                  <div><div class="flex justify-between text-sm mb-1"><span class="text-slate-600">Delivered</span><span class="font-medium">112</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-green-500 rounded-full" style="width:76%"></div></div></div>
-                  <div><div class="flex justify-between text-sm mb-1"><span class="text-slate-600">In Transit</span><span class="font-medium">18</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-500 rounded-full" style="width:12%"></div></div></div>
-                  <div><div class="flex justify-between text-sm mb-1"><span class="text-slate-600">Pending Confirmation</span><span class="font-medium">9</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width:6%"></div></div></div>
-                  <div><div class="flex justify-between text-sm mb-1"><span class="text-slate-600">Returned / Cancelled</span><span class="font-medium">8</span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-red-400 rounded-full" style="width:5%"></div></div></div>
-                </div>
-              </div>
-              <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-soft">
-                <h3 class="font-semibold text-sm mb-4">Top Products</h3>
-                <div class="space-y-3">
-                  <div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-lg">🎧</div><div class="flex-1 min-w-0"><div class="text-sm font-medium truncate">ANC Earbuds Pro</div><div class="text-xs text-slate-400">42 orders</div></div><div class="text-sm font-semibold text-brand-600">+1.2K</div></div>
-                  <div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-lg">🧴</div><div class="flex-1 min-w-0"><div class="text-sm font-medium truncate">Vitamin C Serum</div><div class="text-xs text-slate-400">28 orders</div></div><div class="text-sm font-semibold text-brand-600">+890</div></div>
-                  <div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-lg">💡</div><div class="flex-1 min-w-0"><div class="text-sm font-medium truncate">LED Strip Lights</div><div class="text-xs text-slate-400">21 orders</div></div><div class="text-sm font-semibold text-brand-600">+640</div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="dash-orders" class="dash-tab hidden">
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-              <h1 class="font-display text-xl font-extrabold text-slate-900">Order Management</h1>
-              <button class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl hover:bg-brand-700 transition flex items-center gap-2"><i class="fas fa-plus text-xs"></i> New Order</button>
-            </div>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <button class="px-3 py-1.5 text-xs font-medium bg-brand-600 text-white rounded-lg">All</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200">Pending</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200">Confirmed</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200">Shipped</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200">Delivered</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200">Returned</button>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-soft">
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead><tr class="bg-slate-50 border-b border-slate-100 text-left text-xs text-slate-500 uppercase tracking-wide">
-                    <th class="px-4 py-3 font-medium">Order ID</th><th class="px-4 py-3 font-medium">Customer</th><th class="px-4 py-3 font-medium">Product</th><th class="px-4 py-3 font-medium">Total</th><th class="px-4 py-3 font-medium">Status</th><th class="px-4 py-3 font-medium">Date</th>
-                  </tr></thead>
-                  <tbody class="divide-y divide-slate-50" id="orders-table"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div id="dash-products" class="dash-tab hidden">
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-              <h1 class="font-display text-xl font-extrabold text-slate-900">My Listed Products</h1>
-              <button onclick="showView('catalog')" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl hover:bg-brand-700 transition flex items-center gap-2"><i class="fas fa-plus text-xs"></i> Add from Catalog</button>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-soft text-center">
-              <div class="text-4xl mb-3">📦</div>
-              <h3 class="font-semibold mb-1">You have 12 products listed</h3>
-              <p class="text-sm text-slate-500 mb-4">All from our warehouses. Manage pricing and track performance.</p>
-              <button onclick="showView('catalog')" class="px-5 py-2.5 bg-brand-50 text-brand-700 text-sm font-semibold rounded-xl hover:bg-brand-100 transition">Browse Catalog</button>
-            </div>
-          </div>
-          <div id="dash-payouts" class="dash-tab hidden">
-            <h1 class="font-display text-xl font-extrabold text-slate-900 mb-6">Payouts & Balance</h1>
-            <div class="grid sm:grid-cols-3 gap-4 mb-6">
-              <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-soft"><div class="text-xs text-slate-500 mb-1">Available for payout</div><div class="font-display text-2xl font-extrabold text-brand-700">1,940 AED</div></div>
-              <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-soft"><div class="text-xs text-slate-500 mb-1">Pending (in transit)</div><div class="font-display text-2xl font-extrabold text-slate-700">680 AED</div></div>
-              <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-soft"><div class="text-xs text-slate-500 mb-1">Total paid (all time)</div><div class="font-display text-2xl font-extrabold text-slate-700">28,450 AED</div></div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-soft">
-              <div class="px-5 py-4 border-b border-slate-100 font-semibold text-sm">Recent Payouts</div>
-              <div class="divide-y divide-slate-50">
-                <div class="px-5 py-3.5 flex items-center justify-between text-sm"><div><div class="font-medium">Weekly Payout #48</div><div class="text-xs text-slate-400">25 Oct 2026 · Bank Transfer</div></div><div class="text-right"><div class="font-semibold text-green-600">+2,140 AED</div><div class="text-xs text-green-500">Completed</div></div></div>
-                <div class="px-5 py-3.5 flex items-center justify-between text-sm"><div><div class="font-medium">Weekly Payout #47</div><div class="text-xs text-slate-400">18 Oct 2026 · Bank Transfer</div></div><div class="text-right"><div class="font-semibold text-green-600">+1,890 AED</div><div class="text-xs text-green-500">Completed</div></div></div>
-                <div class="px-5 py-3.5 flex items-center justify-between text-sm"><div><div class="font-medium">Weekly Payout #46</div><div class="text-xs text-slate-400">11 Oct 2026 · Binance USDT</div></div><div class="text-right"><div class="font-semibold text-green-600">+2,310 AED</div><div class="text-xs text-green-500">Completed</div></div></div>
-              </div>
-            </div>
-          </div>
-          <div id="dash-stores" class="dash-tab hidden">
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-              <h1 class="font-display text-xl font-extrabold text-slate-900">Connected Stores</h1>
-              <button class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl hover:bg-brand-700 transition flex items-center gap-2"><i class="fas fa-plus text-xs"></i> Connect Store</button>
-            </div>
-            <div class="grid sm:grid-cols-2 gap-4">
-              <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-soft">
-                <div class="flex items-center gap-3 mb-3">
-                  <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-700 font-bold text-sm">S</div>
-                  <div><div class="font-semibold">My UAE Store</div><div class="text-xs text-slate-400">Shopify · Connected</div></div>
-                  <span class="ml-auto w-2.5 h-2.5 bg-green-500 rounded-full"></span>
-                </div>
-                <div class="text-xs text-slate-500">Auto-forward: <span class="text-green-600 font-medium">Enabled</span></div>
-              </div>
-              <div class="bg-white rounded-2xl border border-dashed border-slate-300 p-5 flex items-center justify-center text-slate-400 hover:border-brand-400 hover:text-brand-600 cursor-pointer transition">
-                <div class="text-center"><i class="fas fa-plus text-xl mb-2"></i><div class="text-sm font-medium">Add another store</div></div>
-              </div>
-            </div>
-          </div>
-          <div id="dash-settings" class="dash-tab hidden">
-            <h1 class="font-display text-xl font-extrabold text-slate-900 mb-6">Account Settings</h1>
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-soft space-y-5 max-w-lg">
-              <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Full Name</label><input type="text" value="Ahmed Al-Rashid" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" /></div>
-              <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Email</label><input type="email" value="ahmed@example.com" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" /></div>
-              <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">WhatsApp Number</label><input type="tel" value="+971 50 123 4567" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" /></div>
-              <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Preferred Payout Method</label><select class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500"><option>UAE Bank Transfer</option><option>Binance (USDT)</option><option>International SWIFT</option></select></div>
-              <button class="px-5 py-2.5 bg-brand-600 text-white text-sm font-bold rounded-xl hover:bg-brand-700 transition">Save Changes</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ==================== REGISTER ==================== -->
   <div id="view-register" class="view">
     <div class="max-w-md mx-auto px-4 py-12">
@@ -978,7 +807,7 @@
           <h1 class="font-display text-2xl font-extrabold text-slate-900">Create Free Account</h1>
           <p class="text-sm text-slate-500 mt-1">Start selling from our warehouses in under 2 minutes</p>
         </div>
-        <form onsubmit="event.preventDefault(); alert('Demo: Account created! Redirecting to dashboard...'); showView('dashboard');" class="space-y-4">
+        <form onsubmit="event.preventDefault(); alert('Demo: Account created successfully!'); showView('home');" class="space-y-4">
           <div><label class="text-xs font-medium text-slate-600 mb-1.5 block">Full Name</label><input required type="text" placeholder="Your full name" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" /></div>
           <div><label class="text-xs font-medium text-slate-600 mb-1.5 block">Email Address</label><input required type="email" placeholder="you@example.com" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" /></div>
           <div><label class="text-xs font-medium text-slate-600 mb-1.5 block">WhatsApp Number</label><input required type="tel" placeholder="+971 50 000 0000" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" /></div>
@@ -1076,17 +905,6 @@
       { id: 18, name: "Building Blocks STEM Set 120pcs", category: "Toys", cost: 36, suggested: 99, profit: 45, stock: 190, tag: "new", emoji: "🧱", sold: 210, rating: 4.6 },
     ];
 
-    const orders = [
-      { id: "GD-10482", customer: "Fatima H.", product: "ANC Earbuds Pro", total: 129, status: "Delivered", date: "28 Oct" },
-      { id: "GD-10481", customer: "Omar K.", product: "Vitamin C Serum", total: 89, status: "In Transit", date: "28 Oct" },
-      { id: "GD-10480", customer: "Sara M.", product: "LED Strip Lights", total: 69, status: "Confirmed", date: "27 Oct" },
-      { id: "GD-10479", customer: "Hassan A.", product: "Smart Watch", total: 149, status: "Pending", date: "27 Oct" },
-      { id: "GD-10478", customer: "Noura B.", product: "Portable Blender", total: 99, status: "Delivered", date: "26 Oct" },
-      { id: "GD-10477", customer: "Youssef R.", product: "Car Vacuum", total: 109, status: "Returned", date: "26 Oct" },
-      { id: "GD-10476", customer: "Lina S.", product: "Face Cream", total: 95, status: "Delivered", date: "25 Oct" },
-      { id: "GD-10475", customer: "Khalid M.", product: "Bluetooth Speaker", total: 119, status: "In Transit", date: "25 Oct" },
-    ];
-
     let activeTags = new Set();
 
     function showView(name) {
@@ -1096,7 +914,6 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (name === 'home') renderHomeProducts();
       if (name === 'catalog') filterProducts();
-      if (name === 'dashboard') setDashTab('overview');
     }
 
     function toggleMobileMenu() {
@@ -1262,36 +1079,6 @@
     function closeProductModal() {
       document.getElementById('product-modal').classList.add('hidden');
       document.body.style.overflow = '';
-    }
-
-    function setDashTab(tab) {
-      document.querySelectorAll('.dash-tab').forEach(t => t.classList.add('hidden'));
-      document.getElementById('dash-' + tab)?.classList.remove('hidden');
-      document.querySelectorAll('.sidebar-link').forEach(l => {
-        l.classList.remove('active');
-        if (l.dataset.tab === tab) l.classList.add('active');
-      });
-      if (tab === 'orders') renderOrders();
-    }
-
-    function renderOrders() {
-      const statusColor = {
-        'Delivered': 'bg-green-100 text-green-700',
-        'In Transit': 'bg-blue-100 text-blue-700',
-        'Confirmed': 'bg-indigo-100 text-indigo-700',
-        'Pending': 'bg-amber-100 text-amber-700',
-        'Returned': 'bg-red-100 text-red-700',
-      };
-      document.getElementById('orders-table').innerHTML = orders.map(o => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="px-4 py-3 font-medium text-brand-700">${o.id}</td>
-          <td class="px-4 py-3">${o.customer}</td>
-          <td class="px-4 py-3 text-slate-600">${o.product}</td>
-          <td class="px-4 py-3 font-medium">${o.total} AED</td>
-          <td class="px-4 py-3"><span class="text-xs font-medium px-2 py-1 rounded-full ${statusColor[o.status] || ''}">${o.status}</span></td>
-          <td class="px-4 py-3 text-slate-400">${o.date}</td>
-        </tr>
-      `).join('');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
