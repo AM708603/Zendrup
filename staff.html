@@ -1,230 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zamrud Staff Dashboard</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d9488'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='18' fill='white'%3EZ%3C/text%3E%3C/svg%3E" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: { 50:'#f0fdfa',100:'#ccfbf1',200:'#99f6e4',300:'#5eead4',400:'#2dd4bf',500:'#14b8a6',600:'#0d9488',700:'#0f766e',800:'#115e59',900:'#134e4a',950:'#042f2e' },
-            gold: { 400:'#fbbf24',500:'#f59e0b',600:'#d97706' }
-          },
-          fontFamily: { sans:['Inter','system-ui','sans-serif'], display:['Plus Jakarta Sans','Inter','sans-serif'] }
-        }
-      }
-    }
-  </script>
-  <style>
-    body { font-family: Inter, system-ui, sans-serif; }
-    .font-display { font-family: 'Plus Jakarta Sans', Inter, sans-serif; }
-    .sidebar-link.active { background: #f0fdfa; color: #0f766e; border-right: 3px solid #14b8a6; }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; animation: fade .25s ease; }
-    @keyframes fade { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-  </style>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Zamrud Staff</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d9488'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='18' fill='white'%3EZ%3C/text%3E%3C/svg%3E"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+<script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdfa',100:'#ccfbf1',500:'#14b8a6',600:'#0d9488',700:'#0f766e'}},fontFamily:{sans:['Inter','system-ui'],display:['Plus Jakarta Sans','Inter']}}}}</script>
+<style>body{font-family:Inter,system-ui,sans-serif}.font-display{font-family:'Plus Jakarta Sans',Inter,sans-serif}.sidebar-link.active{background:#f0fdfa;color:#0f766e;border-right:3px solid #14b8a6}.tab-panel{display:none}.tab-panel.active{display:block}</style>
 </head>
 <body class="bg-slate-100 text-slate-800">
-  <div class="min-h-screen flex">
-    <aside class="w-64 bg-white border-r border-slate-200 flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
-      <div class="px-5 py-5 border-b border-slate-100 flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-800 text-white font-display font-extrabold flex items-center justify-center shadow-lg shadow-brand-500/30">Z</div>
-        <div>
-          <div class="font-display font-extrabold text-slate-900 leading-tight">Zamrud</div>
-          <div class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Staff</div>
-        </div>
-      </div>
-      <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        <button onclick="showTab('queue')" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="queue"><i class="fas fa-list-check w-5 text-center"></i> My Queue</button>
-        <button onclick="showTab('confirm')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="confirm"><i class="fas fa-phone-volume w-5 text-center"></i> COD Confirmation</button>
-        <button onclick="showTab('fulfill')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="fulfill"><i class="fas fa-box-open w-5 text-center"></i> Fulfillment</button>
-        <button onclick="showTab('warehouse')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="warehouse"><i class="fas fa-warehouse w-5 text-center"></i> Warehouse</button>
-        <button onclick="showTab('returns')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="returns"><i class="fas fa-undo w-5 text-center"></i> Returns</button>
-        <button onclick="showTab('support')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="support"><i class="fas fa-headset w-5 text-center"></i> Support Tickets</button>
-        <button onclick="showTab('profile')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="profile"><i class="fas fa-user w-5 text-center"></i> My Profile</button>
-      </nav>
-      <div class="p-3 border-t border-slate-100">
-        <div class="flex items-center gap-3 px-3 py-2">
-          <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">LH</div>
-          <div class="min-w-0"><div class="text-sm font-semibold truncate">Layla Hassan</div><div class="text-[11px] text-slate-400">COD · Evening shift</div></div>
-        </div>
-      </div>
-    </aside>
-
-    <main class="flex-1 min-w-0">
-      <header class="bg-white border-b border-slate-200 sticky top-0 z-20 px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <button class="lg:hidden p-2 rounded-lg hover:bg-slate-100" onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="fas fa-bars"></i></button>
-          <div>
-            <h1 class="font-display font-extrabold text-slate-900 text-lg" id="page-title">My Queue</h1>
-            <p class="text-xs text-slate-400">Staff operations · Zamrud UAE</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="hidden sm:inline text-xs bg-green-50 text-green-700 font-medium px-2.5 py-1 rounded-full"><i class="fas fa-circle text-[8px] mr-1"></i> Online · Evening</span>
-          <button class="p-2 rounded-lg hover:bg-slate-100"><i class="fas fa-bell text-slate-500"></i></button>
-        </div>
-      </header>
-
-      <div class="p-4 sm:p-6">
-        <!-- QUEUE -->
-        <div id="tab-queue" class="tab-panel active space-y-5">
-          <div class="grid sm:grid-cols-4 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">Assigned to me</div><div class="font-display text-2xl font-extrabold">24</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">COD to call</div><div class="font-display text-2xl font-extrabold text-amber-600">11</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">Ready to pack</div><div class="font-display text-2xl font-extrabold text-blue-600">8</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">Done today</div><div class="font-display text-2xl font-extrabold text-green-600">47</div></div>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="px-5 py-3 border-b border-slate-100 font-semibold text-sm">Priority tasks</div>
-            <div class="divide-y divide-slate-50 text-sm">
-              <div class="px-5 py-3.5 flex items-center gap-3 hover:bg-slate-50">
-                <span class="text-xs font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded">COD</span>
-                <div class="flex-1"><div class="font-medium">ZM-20479 · Hassan A. · +971 50 ***</div><div class="text-xs text-slate-400">Smart Watch · 149 AED · Attempt 1</div></div>
-                <button class="px-3 py-1.5 text-xs font-semibold bg-brand-600 text-white rounded-lg">Call</button>
-              </div>
-              <div class="px-5 py-3.5 flex items-center gap-3 hover:bg-slate-50">
-                <span class="text-xs font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded">COD</span>
-                <div class="flex-1"><div class="font-medium">ZM-20475 · Noura B. · +971 55 ***</div><div class="text-xs text-slate-400">Face Cream · 95 AED · Attempt 2</div></div>
-                <button class="px-3 py-1.5 text-xs font-semibold bg-brand-600 text-white rounded-lg">Call</button>
-              </div>
-              <div class="px-5 py-3.5 flex items-center gap-3 hover:bg-slate-50">
-                <span class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">PACK</span>
-                <div class="flex-1"><div class="font-medium">ZM-20468 · 3 items · Dubai WH</div><div class="text-xs text-slate-400">Confirmed · Aisle B2</div></div>
-                <button class="px-3 py-1.5 text-xs font-semibold bg-slate-800 text-white rounded-lg">Pick</button>
-              </div>
-              <div class="px-5 py-3.5 flex items-center gap-3 hover:bg-slate-50">
-                <span class="text-xs font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded">RETURN</span>
-                <div class="flex-1"><div class="font-medium">ZM-20412 · Car Vacuum · Inspect</div><div class="text-xs text-slate-400">Customer rejected · Restock?</div></div>
-                <button class="px-3 py-1.5 text-xs font-semibold border border-slate-200 rounded-lg">Open</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- COD CONFIRMATION -->
-        <div id="tab-confirm" class="tab-panel space-y-4">
-          <div class="flex flex-wrap gap-2">
-            <button class="px-3 py-1.5 text-xs font-medium bg-brand-600 text-white rounded-lg">To Call (11)</button>
-            <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Callback</button>
-            <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Confirmed today</button>
-            <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Rejected</button>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <table class="w-full text-sm">
-              <thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Phone</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Amount</th><th class="px-4 py-3">Attempts</th><th class="px-4 py-3">Action</th></tr></thead>
-              <tbody class="divide-y divide-slate-50">
-                <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">ZM-20479</td><td class="px-4 py-3">Hassan A.</td><td class="px-4 py-3">+971 50 ***</td><td class="px-4 py-3">Smart Watch</td><td class="px-4 py-3">149 AED</td><td class="px-4 py-3">1</td><td class="px-4 py-3"><div class="flex gap-1"><button class="px-2 py-1 text-xs bg-green-600 text-white rounded">Confirm</button><button class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded">Reject</button></div></td></tr>
-                <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">ZM-20475</td><td class="px-4 py-3">Noura B.</td><td class="px-4 py-3">+971 55 ***</td><td class="px-4 py-3">Face Cream</td><td class="px-4 py-3">95 AED</td><td class="px-4 py-3">2</td><td class="px-4 py-3"><div class="flex gap-1"><button class="px-2 py-1 text-xs bg-green-600 text-white rounded">Confirm</button><button class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded">Reject</button></div></td></tr>
-                <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">ZM-20470</td><td class="px-4 py-3">Omar K.</td><td class="px-4 py-3">+971 52 ***</td><td class="px-4 py-3">LED Strip</td><td class="px-4 py-3">69 AED</td><td class="px-4 py-3">0</td><td class="px-4 py-3"><div class="flex gap-1"><button class="px-2 py-1 text-xs bg-green-600 text-white rounded">Confirm</button><button class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded">Reject</button></div></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- FULFILLMENT -->
-        <div id="tab-fulfill" class="tab-panel space-y-4">
-          <div class="grid sm:grid-cols-3 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">To pick</div><div class="font-display text-xl font-extrabold">18</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">Packing</div><div class="font-display text-xl font-extrabold">7</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">Shipped today</div><div class="font-display text-xl font-extrabold text-green-600">96</div></div>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <table class="w-full text-sm">
-              <thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Items</th><th class="px-4 py-3">Location</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Action</th></tr></thead>
-              <tbody class="divide-y divide-slate-50">
-                <tr><td class="px-4 py-3 font-medium text-brand-700">ZM-20468</td><td class="px-4 py-3">3 items</td><td class="px-4 py-3">Dubai · B2-14</td><td class="px-4 py-3"><span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Ready</span></td><td class="px-4 py-3"><button class="text-xs font-semibold text-brand-600">Start pick</button></td></tr>
-                <tr><td class="px-4 py-3 font-medium text-brand-700">ZM-20465</td><td class="px-4 py-3">1 item</td><td class="px-4 py-3">Sharjah · A1-08</td><td class="px-4 py-3"><span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">Packing</span></td><td class="px-4 py-3"><button class="text-xs font-semibold text-brand-600">Mark packed</button></td></tr>
-                <tr><td class="px-4 py-3 font-medium text-brand-700">ZM-20461</td><td class="px-4 py-3">2 items</td><td class="px-4 py-3">Dubai · C3-02</td><td class="px-4 py-3"><span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Packed</span></td><td class="px-4 py-3"><button class="text-xs font-semibold text-brand-600">Add tracking</button></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- WAREHOUSE -->
-        <div id="tab-warehouse" class="tab-panel space-y-4">
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <h3 class="font-semibold mb-3">Dubai Warehouse</h3>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between"><span class="text-slate-500">SKUs</span><span class="font-medium">7,820</span></div>
-                <div class="flex justify-between"><span class="text-slate-500">Low stock</span><span class="font-medium text-amber-600">54</span></div>
-                <div class="flex justify-between"><span class="text-slate-500">Picks today</span><span class="font-medium">142</span></div>
-              </div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <h3 class="font-semibold mb-3">Sharjah Warehouse</h3>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between"><span class="text-slate-500">SKUs</span><span class="font-medium">4,228</span></div>
-                <div class="flex justify-between"><span class="text-slate-500">Low stock</span><span class="font-medium text-amber-600">32</span></div>
-                <div class="flex justify-between"><span class="text-slate-500">Picks today</span><span class="font-medium">88</span></div>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <h3 class="font-semibold text-sm mb-3">Scan / Restock</h3>
-            <div class="flex gap-2">
-              <input type="text" placeholder="Scan SKU or barcode..." class="flex-1 px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" />
-              <button class="px-4 py-2.5 bg-brand-600 text-white text-sm font-bold rounded-xl">Lookup</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- RETURNS -->
-        <div id="tab-returns" class="tab-panel space-y-4">
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <table class="w-full text-sm">
-              <thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Reason</th><th class="px-4 py-3">Condition</th><th class="px-4 py-3">Action</th></tr></thead>
-              <tbody class="divide-y divide-slate-50">
-                <tr><td class="px-4 py-3 font-medium">ZM-20412</td><td class="px-4 py-3">Car Vacuum</td><td class="px-4 py-3">Customer rejected</td><td class="px-4 py-3">Unopened</td><td class="px-4 py-3"><button class="text-xs font-semibold text-brand-600">Restock</button></td></tr>
-                <tr><td class="px-4 py-3 font-medium">ZM-20398</td><td class="px-4 py-3">Blender</td><td class="px-4 py-3">Damaged in transit</td><td class="px-4 py-3">Damaged</td><td class="px-4 py-3"><button class="text-xs font-semibold text-red-600">Write-off</button></td></tr>
-                <tr><td class="px-4 py-3 font-medium">ZM-20390</td><td class="px-4 py-3">Yoga Mat</td><td class="px-4 py-3">Wrong item</td><td class="px-4 py-3">Good</td><td class="px-4 py-3"><button class="text-xs font-semibold text-brand-600">Restock</button></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- SUPPORT -->
-        <div id="tab-support" class="tab-panel space-y-4">
-          <div class="grid sm:grid-cols-3 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">Open tickets</div><div class="font-display text-xl font-extrabold text-amber-600">12</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">Mine</div><div class="font-display text-xl font-extrabold">4</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><div class="text-xs text-slate-500 mb-1">Resolved today</div><div class="font-display text-xl font-extrabold text-green-600">9</div></div>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-50 text-sm">
-            <div class="px-5 py-3.5 flex items-center gap-3"><span class="text-xs font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded">HIGH</span><div class="flex-1"><div class="font-medium">Missing tracking · ZM-20440</div><div class="text-xs text-slate-400">Dropshipper: Ahmed R.</div></div><button class="text-xs font-semibold text-brand-600">Open</button></div>
-            <div class="px-5 py-3.5 flex items-center gap-3"><span class="text-xs font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded">MED</span><div class="flex-1"><div class="font-medium">Wrong address update</div><div class="text-xs text-slate-400">Customer request</div></div><button class="text-xs font-semibold text-brand-600">Open</button></div>
-            <div class="px-5 py-3.5 flex items-center gap-3"><span class="text-xs font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">LOW</span><div class="flex-1"><div class="font-medium">Product image request</div><div class="text-xs text-slate-400">Agency: GrowthLab</div></div><button class="text-xs font-semibold text-brand-600">Open</button></div>
-          </div>
-        </div>
-
-        <!-- PROFILE -->
-        <div id="tab-profile" class="tab-panel">
-          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm max-w-lg space-y-4">
-            <h3 class="font-semibold">My Profile</h3>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Name</label><input type="text" value="Layla Hassan" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500" /></div>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Role</label><input type="text" value="COD Confirmation" disabled class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl bg-slate-50" /></div>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Shift</label><select class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500"><option>Evening</option><option>Morning</option><option>Full day</option></select></div>
-            <button class="px-5 py-2.5 bg-brand-600 text-white text-sm font-bold rounded-xl">Save</button>
-          </div>
-        </div>
-      </div>
-    </main>
+<div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl border shadow-lg p-8 w-full max-w-md">
+    <div class="text-center mb-6"><div class="w-12 h-12 mx-auto rounded-xl bg-brand-600 text-white font-display font-extrabold text-xl flex items-center justify-center mb-3">Z</div>
+    <h1 class="font-display font-extrabold text-xl">Zamrud Staff</h1><p class="text-sm text-slate-500">Operations login</p></div>
+    <form id="login-form" class="space-y-4">
+      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Email</label><input name="email" type="email" value="staff@zamrud.ae" required class="w-full px-3 py-2.5 text-sm border rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
+      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Password</label><input name="password" type="password" value="password123" required class="w-full px-3 py-2.5 text-sm border rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
+      <p id="login-error" class="text-sm text-red-600 hidden"></p>
+      <button class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl">Sign in</button>
+    </form>
   </div>
-  <script>
-    const titles = { queue:'My Queue', confirm:'COD Confirmation', fulfill:'Fulfillment', warehouse:'Warehouse', returns:'Returns', support:'Support Tickets', profile:'My Profile' };
-    function showTab(id) {
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById('tab-' + id).classList.add('active');
-      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.toggle('active', l.dataset.tab === id));
-      document.getElementById('page-title').textContent = titles[id] || id;
-    }
-  </script>
+</div>
+<div id="app" class="min-h-screen flex hidden">
+  <aside class="w-64 bg-white border-r flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
+    <div class="px-5 py-5 border-b flex items-center gap-2.5"><div class="w-9 h-9 rounded-xl bg-brand-600 text-white font-display font-extrabold flex items-center justify-center">Z</div><div><div class="font-display font-extrabold">Zamrud</div><div class="text-[10px] font-bold text-blue-600 uppercase">Staff</div></div></div>
+    <nav class="flex-1 p-3 space-y-0.5">
+      <button onclick="showTab('queue')" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="queue"><i class="fas fa-list-check w-5 text-center"></i> My Queue</button>
+      <button onclick="showTab('orders')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="orders"><i class="fas fa-shopping-bag w-5 text-center"></i> Orders</button>
+    </nav>
+    <div class="p-3 border-t"><div class="flex items-center gap-3 px-3 py-2"><div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold" id="avatar">S</div><div class="min-w-0 flex-1"><div class="text-sm font-semibold truncate" id="user-name">Staff</div><div class="text-[11px] text-slate-400" id="user-email"></div></div><button onclick="logout()" class="text-slate-400 hover:text-red-500"><i class="fas fa-sign-out-alt"></i></button></div></div>
+  </aside>
+  <main class="flex-1 min-w-0">
+    <header class="bg-white border-b sticky top-0 z-20 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3"><button class="lg:hidden p-2" onclick="document.querySelector('aside').classList.toggle('hidden');document.querySelector('aside').classList.toggle('flex')"><i class="fas fa-bars"></i></button><h1 class="font-display font-extrabold text-lg" id="page-title">My Queue</h1></div>
+      <span class="text-xs text-green-600 font-medium">Online</span>
+    </header>
+    <div class="p-4 sm:p-6">
+      <div id="tab-queue" class="tab-panel active space-y-4">
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="bg-white rounded-2xl border p-4"><div class="text-xs text-slate-500">Open tasks</div><div class="font-display text-2xl font-extrabold" id="stat-tasks">—</div></div>
+          <div class="bg-white rounded-2xl border p-4"><div class="text-xs text-slate-500">COD to call</div><div class="font-display text-2xl font-extrabold text-amber-600" id="stat-cod">—</div></div>
+          <div class="bg-white rounded-2xl border p-4"><div class="text-xs text-slate-500">Pack tasks</div><div class="font-display text-2xl font-extrabold text-blue-600" id="stat-pack">—</div></div>
+        </div>
+        <div class="bg-white rounded-2xl border overflow-hidden"><div class="px-5 py-3 border-b font-semibold text-sm">Tasks</div><div id="tasks-list" class="divide-y text-sm"></div></div>
+      </div>
+      <div id="tab-orders" class="tab-panel space-y-4">
+        <div class="bg-white rounded-2xl border overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Phone</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Action</th></tr></thead><tbody id="orders-body" class="divide-y"></tbody></table></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+const API="https://zamrud.borntow2.workers.dev";
+const TOKEN_KEY="zamrud_token_staff"; const USER_KEY="zamrud_user_staff";
+function token(){return localStorage.getItem(TOKEN_KEY)}
+function currentUser(){try{return JSON.parse(localStorage.getItem(USER_KEY)||"null")}catch{return null}}
+async function api(path,opts={}){const headers={"Content-Type":"application/json",...(opts.headers||{})};if(token())headers.Authorization="Bearer "+token();const res=await fetch(API+path,{...opts,headers});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||res.statusText);return data}
+function showTab(id){document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));document.getElementById("tab-"+id).classList.add("active");document.querySelectorAll(".sidebar-link").forEach(l=>l.classList.toggle("active",l.dataset.tab===id));document.getElementById("page-title").textContent=id==="queue"?"My Queue":"Orders";if(id==="orders")loadOrders();if(id==="queue")loadTasks()}
+async function loadTasks(){const data=await api("/tasks");const tasks=data.tasks||[];document.getElementById("stat-tasks").textContent=tasks.length;document.getElementById("stat-cod").textContent=tasks.filter(t=>t.type==="cod").length;document.getElementById("stat-pack").textContent=tasks.filter(t=>t.type==="pack").length;document.getElementById("tasks-list").innerHTML=tasks.map(t=>`<div class="px-5 py-3.5 flex items-center gap-3"><span class="text-xs font-bold px-2 py-0.5 rounded ${t.type==="cod"?"bg-amber-100 text-amber-700":"bg-blue-100 text-blue-700"}">${t.type.toUpperCase()}</span><div class="flex-1"><div class="font-medium">${t.order_number} · ${t.customer_name} · ${t.customer_phone||""}</div><div class="text-xs text-slate-400">${t.product_name} · ${t.sell_price_aed} AED · order: ${t.order_status}</div></div><button onclick="doneTask('${t.id}')" class="px-3 py-1.5 text-xs font-semibold bg-brand-600 text-white rounded-lg">Done</button></div>`).join("")||`<div class="px-5 py-8 text-center text-slate-400">No open tasks</div>`}
+async function doneTask(id){try{await api("/tasks/"+id+"/done",{method:"POST",body:"{}" });loadTasks()}catch(e){alert(e.message)}}
+async function loadOrders(){const data=await api("/orders");document.getElementById("orders-body").innerHTML=(data.orders||[]).map(o=>`<tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">${o.order_number}</td><td class="px-4 py-3">${o.customer_name}</td><td class="px-4 py-3">${o.customer_phone}</td><td class="px-4 py-3">${o.product_name}</td><td class="px-4 py-3">${o.status}</td><td class="px-4 py-3">${o.status==="pending"?`<button onclick="setStatus('${o.id}','confirmed')" class="text-xs text-brand-600 font-semibold">Confirm</button>`:""}${o.status==="confirmed"?`<button onclick="setStatus('${o.id}','shipped')" class="text-xs text-brand-600 font-semibold">Ship</button>`:""}${o.status==="shipped"?`<button onclick="setStatus('${o.id}','delivered')" class="text-xs text-green-600 font-semibold">Deliver</button>`:""}</td></tr>`).join("")||`<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">No orders</td></tr>`}
+async function setStatus(id,status){try{await api("/orders/"+id,{method:"PATCH",body:JSON.stringify({status})});loadOrders();loadTasks()}catch(e){alert(e.message)}}
+function logout(){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.reload()}
+async function enterApp(){const u=currentUser();if(!u||(u.role!=="staff"&&u.role!=="admin")){alert("Staff account required");logout();return}document.getElementById("login-screen").classList.add("hidden");document.getElementById("app").classList.remove("hidden");document.getElementById("user-name").textContent=u.name;document.getElementById("user-email").textContent=u.email;document.getElementById("avatar").textContent=(u.name||"S")[0].toUpperCase();await loadTasks()}
+document.getElementById("login-form").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);const errEl=document.getElementById("login-error");errEl.classList.add("hidden");try{const data=await api("/auth/login",{method:"POST",body:JSON.stringify({email:fd.get("email"),password:fd.get("password")})});localStorage.setItem(TOKEN_KEY,data.token);localStorage.setItem(USER_KEY,JSON.stringify(data.user));enterApp()}catch(err){errEl.textContent=err.message;errEl.classList.remove("hidden")}});
+if(token()&&["staff","admin"].includes(currentUser()?.role))enterApp();
+</script>
 </body>
 </html>
