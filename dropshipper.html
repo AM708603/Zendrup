@@ -47,6 +47,7 @@
       <button onclick="showTab('products')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="products"><i class="fas fa-box w-5 text-center"></i> My Products</button>
       <button onclick="showTab('catalog')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="catalog"><i class="fas fa-store w-5 text-center"></i> Catalog</button>
       <button onclick="showTab('payouts')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="payouts"><i class="fas fa-wallet w-5 text-center"></i> Payouts</button>
+      <button onclick="showTab('shopify')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="shopify"><i class="fab fa-shopify w-5 text-center"></i> Shopify</button>
     </nav>
     <div class="p-3 border-t"><div class="flex items-center gap-3 px-3 py-2"><div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold" id="avatar">D</div><div class="min-w-0 flex-1"><div class="text-sm font-semibold truncate" id="user-name">Seller</div><div class="text-[11px] text-slate-400" id="user-email"></div></div><button onclick="logout()" class="text-slate-400 hover:text-red-500"><i class="fas fa-sign-out-alt"></i></button></div></div>
   </aside>
@@ -78,6 +79,39 @@
       <div id="tab-products" class="tab-panel"><div id="my-products" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>
       <div id="tab-catalog" class="tab-panel"><div id="catalog-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>
       <div id="tab-payouts" class="tab-panel"><div class="bg-white rounded-2xl border overflow-hidden"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">ID</th><th class="px-4 py-3">Amount</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Date</th></tr></thead><tbody id="payouts-body" class="divide-y"></tbody></table></div></div>
+
+      <div id="tab-shopify" class="tab-panel space-y-4">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          <h3 class="font-semibold mb-1">Connect Shopify store</h3>
+          <p class="text-sm text-slate-500 mb-4">Use a Custom App Admin API access token. Orders with matching product SKUs import into Zamrud automatically.</p>
+          <div class="grid sm:grid-cols-2 gap-3 mb-3">
+            <div>
+              <label class="text-xs font-medium text-slate-500 mb-1 block">Shop domain</label>
+              <input id="shop-domain" placeholder="your-store.myshopify.com" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-500 mb-1 block">Admin API access token</label>
+              <input id="shop-token" type="password" placeholder="shpat_..." class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="text-xs font-medium text-slate-500 mb-1 block">Webhook secret (optional, for HMAC)</label>
+              <input id="shop-secret" type="password" placeholder="Optional" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+          </div>
+          <button onclick="connectShopify()" class="px-4 py-2.5 bg-brand-600 text-white text-sm font-bold rounded-xl">Connect store</button>
+          <p id="shop-msg" class="text-sm mt-3 hidden"></p>
+        </div>
+        <div class="bg-brand-50 border border-brand-100 rounded-2xl p-4 text-sm text-brand-900">
+          <div class="font-semibold mb-1">Webhook URL (orders/create)</div>
+          <code id="webhook-url" class="text-xs break-all">https://zamrud.borntow2.workers.dev/webhooks/shopify</code>
+          <p class="text-xs text-brand-700 mt-2">In Shopify: Settings → Notifications → Webhooks → Order creation → this URL. Match product <strong>SKU</strong> to Zamrud SKUs (e.g. ZM-AUD-001).</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+          <div class="px-5 py-3 border-b font-semibold text-sm">Connected stores</div>
+          <div id="shops-list" class="divide-y text-sm"></div>
+        </div>
+      </div>
+
     </div>
   </main>
 </div>
@@ -124,12 +158,13 @@ function showTab(id) {
   document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
   document.getElementById("tab-" + id).classList.add("active");
   document.querySelectorAll(".sidebar-link").forEach(function (l) { l.classList.toggle("active", l.dataset.tab === id); });
-  var titles = { overview: "Overview", orders: "Orders", products: "My Products", catalog: "Catalog", payouts: "Payouts" };
+  var titles = { overview: "Overview", orders: "Orders", products: "My Products", catalog: "Catalog", payouts: "Payouts", shopify: "Shopify" };
   document.getElementById("page-title").textContent = titles[id] || id;
   if (id === "orders") loadOrders();
   if (id === "products") loadMyProducts();
   if (id === "catalog") loadCatalog();
   if (id === "payouts") loadPayouts();
+  if (id === "shopify") loadShops();
 }
 
 async function loadOverview() {
@@ -217,6 +252,75 @@ async function loadPayouts() {
     return '<tr><td class="px-4 py-3 font-mono text-xs">' + p.id + '</td><td class="px-4 py-3 font-semibold">' + p.amount_aed + ' AED</td><td class="px-4 py-3">' + p.status + '</td><td class="px-4 py-3 text-slate-400">' + (p.created_at || "").slice(0, 10) + "</td></tr>";
   }).join("") || '<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">No payouts yet</td></tr>';
 }
+
+
+async function loadShops() {
+  try {
+    var data = await api("/shops");
+    var list = document.getElementById("shops-list");
+    if (!list) return;
+    if (!data.shops || !data.shops.length) {
+      list.innerHTML = '<div class="px-5 py-8 text-center text-slate-400">No stores connected yet</div>';
+      return;
+    }
+    list.innerHTML = data.shops.map(function (s) {
+      return '<div class="px-5 py-3.5 flex flex-wrap items-center gap-3">' +
+        '<div class="flex-1 min-w-0"><div class="font-medium">' + s.shop_domain + '</div>' +
+        '<div class="text-xs text-slate-400">Status: ' + s.status + (s.last_sync_at ? ' · Last sync ' + s.last_sync_at : '') + '</div></div>' +
+        '<button onclick="syncShop(\'' + s.id + '\')" class="px-3 py-1.5 text-xs font-semibold bg-brand-50 text-brand-700 rounded-lg">Sync orders</button>' +
+        '<button onclick="disconnectShop(\'' + s.id + '\')" class="px-3 py-1.5 text-xs font-semibold text-red-600 border border-red-100 rounded-lg">Disconnect</button>' +
+        '</div>';
+    }).join("");
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+async function connectShopify() {
+  var msg = document.getElementById("shop-msg");
+  msg.classList.remove("hidden");
+  msg.className = "text-sm mt-3 text-slate-600";
+  msg.textContent = "Connecting…";
+  try {
+    var data = await api("/shops/shopify", {
+      method: "POST",
+      body: JSON.stringify({
+        shop_domain: document.getElementById("shop-domain").value,
+        access_token: document.getElementById("shop-token").value,
+        webhook_secret: document.getElementById("shop-secret").value
+      })
+    });
+    msg.className = "text-sm mt-3 text-green-600";
+    msg.textContent = data.message || "Connected";
+    if (data.webhook_url) document.getElementById("webhook-url").textContent = data.webhook_url;
+    document.getElementById("shop-token").value = "";
+    loadShops();
+  } catch (e) {
+    msg.className = "text-sm mt-3 text-red-600";
+    msg.textContent = e.message;
+  }
+}
+
+async function syncShop(id) {
+  try {
+    var data = await api("/shops/" + id + "/sync", { method: "POST", body: "{}" });
+    alert("Imported " + data.imported + " orders (" + data.skipped + " already existed)");
+    loadShops();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+async function disconnectShop(id) {
+  if (!confirm("Disconnect this store?")) return;
+  try {
+    await api("/shops/" + id, { method: "DELETE" });
+    loadShops();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
 
 async function enterApp() {
   var u = currentUser();
