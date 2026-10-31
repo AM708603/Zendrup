@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Zamrud UAE</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d9488'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='18' fill='white'%3EZ%3C/text%3E%3C/svg%3E" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50:'#f0fdfa',100:'#ccfbf1',500:'#14b8a6',600:'#0d9488',700:'#0f766e',800:'#115e59',900:'#134e4a',950:'#042f2e' },
+            gold: { 400:'#fbbf24',500:'#f59e0b' }
+          },
+          fontFamily: { sans:['Inter','system-ui'], display:['Plus Jakarta Sans','Inter'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; }
+    .font-display { font-family: 'Plus Jakarta Sans', Inter, sans-serif; }
+    .gradient-hero {
+      background: linear-gradient(145deg, #042f2e 0%, #115e59 40%, #0d9488 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800">
+  <div class="min-h-screen grid lg:grid-cols-2">
+    <!-- Left brand panel -->
+    <div class="hidden lg:flex gradient-hero text-white relative overflow-hidden flex-col justify-between p-10 xl:p-14">
+      <div class="absolute inset-0 opacity-30" style="background-image:radial-gradient(at 20% 20%,rgba(45,212,191,.2) 0,transparent 50%),radial-gradient(at 80% 80%,rgba(251,191,36,.15) 0,transparent 40%)"></div>
+      <div class="relative">
+        <a href="index.html" class="inline-flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center font-display font-extrabold text-lg">Z</div>
+          <span class="font-display text-xl font-extrabold">Zam<span class="text-gold-400">rud</span></span>
+        </a>
+      </div>
+      <div class="relative max-w-md">
+        <h2 class="font-display text-3xl font-extrabold leading-tight mb-4">Sell from our UAE warehouses.<br/>Keep higher margins.</h2>
+        <p class="text-brand-100/90 text-sm leading-relaxed mb-6">Own inventory · COD · Weekly payouts · Agency program</p>
+        <ul class="space-y-2.5 text-sm text-brand-50">
+          <li class="flex items-center gap-2"><i class="fas fa-check text-gold-400"></i> 40–60% average profit margins</li>
+          <li class="flex items-center gap-2"><i class="fas fa-check text-gold-400"></i> 1–2 day local delivery</li>
+          <li class="flex items-center gap-2"><i class="fas fa-check text-gold-400"></i> Free to start · pay only on delivered orders</li>
+        </ul>
+      </div>
+      <p class="relative text-xs text-brand-200/80">© 2026 Zamrud UAE</p>
+    </div>
+
+    <!-- Right form -->
+    <div class="flex items-center justify-center p-6 sm:p-10">
+      <div class="w-full max-w-md">
+        <div class="lg:hidden mb-8 flex items-center gap-2">
+          <a href="index.html" class="inline-flex items-center gap-2">
+            <div class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-display font-extrabold">Z</div>
+            <span class="font-display text-lg font-extrabold">Zam<span class="text-brand-600">rud</span></span>
+          </a>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex bg-slate-100 rounded-xl p-1 mb-8">
+          <button id="tab-login" onclick="switchMode('login')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow text-slate-900 transition">Log in</button>
+          <button id="tab-register" onclick="switchMode('register')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg text-slate-500 transition">Create account</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="panel-login">
+          <h1 class="font-display text-2xl font-extrabold text-slate-900 mb-1">Welcome back</h1>
+          <p class="text-sm text-slate-500 mb-6">One login for dropshippers, agencies, staff & admin</p>
+          <form id="login-form" class="space-y-4">
+            <div>
+              <label class="text-xs font-medium text-slate-600 mb-1.5 block">Email</label>
+              <input name="email" type="email" required placeholder="you@example.com" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 mb-1.5 block">Password</label>
+              <input name="password" type="password" required placeholder="Your password" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <p id="login-error" class="text-sm text-red-600 hidden"></p>
+            <button type="submit" id="login-btn" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition shadow-md shadow-brand-600/20">
+              Log in
+            </button>
+          </form>
+          <div class="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <p class="text-xs font-semibold text-slate-500 mb-2">Demo accounts (password: password123)</p>
+            <div class="grid grid-cols-2 gap-2 text-xs text-slate-600">
+              <button type="button" onclick="fillDemo('admin@zamrud.ae')" class="text-left hover:text-brand-700">admin@zamrud.ae</button>
+              <button type="button" onclick="fillDemo('staff@zamrud.ae')" class="text-left hover:text-brand-700">staff@zamrud.ae</button>
+              <button type="button" onclick="fillDemo('agency@growthlab.ae')" class="text-left hover:text-brand-700">agency@growthlab.ae</button>
+              <button type="button" onclick="fillDemo('ahmed@email.com')" class="text-left hover:text-brand-700">ahmed@email.com</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="panel-register" class="hidden">
+          <h1 class="font-display text-2xl font-extrabold text-slate-900 mb-1">Create free account</h1>
+          <p class="text-sm text-slate-500 mb-6">Start selling from our warehouses in under 2 minutes</p>
+          <form id="register-form" class="space-y-4">
+            <div>
+              <label class="text-xs font-medium text-slate-600 mb-1.5 block">Full name</label>
+              <input name="name" type="text" required placeholder="Your full name" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 mb-1.5 block">Email</label>
+              <input name="email" type="email" required placeholder="you@example.com" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 mb-1.5 block">WhatsApp</label>
+              <input name="phone" type="tel" required placeholder="+971 50 000 0000" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 mb-1.5 block">Password</label>
+              <input name="password" type="password" required minlength="6" placeholder="Min. 6 characters" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="text-xs font-medium text-slate-600 mb-1.5 block">I am a</label>
+              <select name="account_type" class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <option value="dropshipper">Individual Reseller / Dropshipper</option>
+                <option value="agency">Marketing Agency / Freelancer</option>
+              </select>
+            </div>
+            <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-600">
+              <input type="checkbox" required class="mt-0.5 rounded text-brand-600 focus:ring-brand-500" />
+              <span>I agree to the Terms and Privacy Policy</span>
+            </label>
+            <p id="register-error" class="text-sm text-red-600 hidden"></p>
+            <p id="register-ok" class="text-sm text-green-600 hidden"></p>
+            <button type="submit" id="register-btn" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition shadow-md shadow-brand-600/20">
+              Create free account
+            </button>
+          </form>
+          <p class="text-center text-xs text-slate-400 mt-4">✓ Own inventory · Higher margins · Free forever</p>
+        </div>
+
+        <p class="text-center text-sm text-slate-500 mt-8">
+          <a href="index.html" class="text-brand-600 font-semibold hover:underline"><i class="fas fa-arrow-left text-xs mr-1"></i> Back to home</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = "https://zamrud.borntow2.workers.dev";
+
+    const DASHBOARDS = {
+      admin: "admin.html",
+      staff: "staff.html",
+      agency: "agency.html",
+      dropshipper: "dropshipper.html"
+    };
+
+    function switchMode(mode) {
+      const isLogin = mode === "login";
+      document.getElementById("panel-login").classList.toggle("hidden", !isLogin);
+      document.getElementById("panel-register").classList.toggle("hidden", isLogin);
+      document.getElementById("tab-login").className = isLogin
+        ? "flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow text-slate-900 transition"
+        : "flex-1 py-2.5 text-sm font-semibold rounded-lg text-slate-500 transition";
+      document.getElementById("tab-register").className = !isLogin
+        ? "flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow text-slate-900 transition"
+        : "flex-1 py-2.5 text-sm font-semibold rounded-lg text-slate-500 transition";
+    }
+
+    function fillDemo(email) {
+      const form = document.getElementById("login-form");
+      form.email.value = email;
+      form.password.value = "password123";
+    }
+
+    function saveSession(token, user) {
+      // Shared keys so dashboards can also read if needed
+      localStorage.setItem("zamrud_token", token);
+      localStorage.setItem("zamrud_user", JSON.stringify(user));
+      // Role-specific keys used by current dashboards
+      const role = user.role;
+      if (role === "admin") {
+        localStorage.setItem("zamrud_token_admin", token);
+        localStorage.setItem("zamrud_user_admin", JSON.stringify(user));
+      } else if (role === "staff") {
+        localStorage.setItem("zamrud_token_staff", token);
+        localStorage.setItem("zamrud_user_staff", JSON.stringify(user));
+      } else if (role === "agency") {
+        localStorage.setItem("zamrud_token_agency", token);
+        localStorage.setItem("zamrud_user_agency", JSON.stringify(user));
+      } else if (role === "dropshipper") {
+        localStorage.setItem("zamrud_token_drop", token);
+        localStorage.setItem("zamrud_user_drop", JSON.stringify(user));
+      }
+    }
+
+    function redirectByRole(role) {
+      const page = DASHBOARDS[role] || "dropshipper.html";
+      window.location.href = page;
+    }
+
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const err = document.getElementById("login-error");
+      const btn = document.getElementById("login-btn");
+      err.classList.add("hidden");
+      btn.disabled = true;
+      btn.textContent = "Signing in…";
+      try {
+        const res = await fetch(API + "/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: fd.get("email"), password: fd.get("password") })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Login failed");
+        saveSession(data.token, data.user);
+        redirectByRole(data.user.role);
+      } catch (ex) {
+        err.textContent = ex.message;
+        err.classList.remove("hidden");
+        btn.disabled = false;
+        btn.textContent = "Log in";
+      }
+    });
+
+    document.getElementById("register-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const err = document.getElementById("register-error");
+      const ok = document.getElementById("register-ok");
+      const btn = document.getElementById("register-btn");
+      err.classList.add("hidden");
+      ok.classList.add("hidden");
+      btn.disabled = true;
+      btn.textContent = "Creating…";
+
+      // API does not have /auth/register yet — show clear message + auto switch to login with tip
+      // When you add register endpoint, replace this block with a real fetch.
+      try {
+        // Attempt optional endpoint if you add it later
+        const res = await fetch(API + "/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: fd.get("name"),
+            email: fd.get("email"),
+            phone: fd.get("phone"),
+            password: fd.get("password"),
+            role: fd.get("account_type") === "agency" ? "agency" : "dropshipper"
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.token) {
+          saveSession(data.token, data.user);
+          redirectByRole(data.user.role);
+          return;
+        }
+        if (res.status === 404 || res.status === 405) {
+          throw new Error("Registration API not enabled yet. Use a demo login for now, or ask admin to add your account.");
+        }
+        throw new Error(data.error || "Registration failed");
+      } catch (ex) {
+        if (ex.message.includes("Failed to fetch")) {
+          err.textContent = "Could not reach API. Check your connection.";
+        } else {
+          err.textContent = ex.message;
+        }
+        err.classList.remove("hidden");
+        btn.disabled = false;
+        btn.textContent = "Create free account";
+      }
+    });
+
+    // Open register tab if ?register=1 or #register
+    if (location.search.includes("register") || location.hash === "#register") {
+      switchMode("register");
+    }
+  </script>
+</body>
+</html>
