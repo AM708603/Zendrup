@@ -89,6 +89,23 @@
 
         </div>
 
+        <!-- VERIFY -->
+        <div id="panel-verify" class="hidden">
+          <h1 class="font-display text-2xl font-extrabold text-slate-900 mb-1">Verify your email</h1>
+          <p class="text-sm text-slate-500 mb-6">Enter the 6-digit code we sent to <span id="verify-email-label" class="font-medium text-slate-700"></span></p>
+          <form id="verify-form" class="space-y-4">
+            <div>
+              <label class="text-xs font-medium text-slate-500 mb-1 block">Verification code</label>
+              <input name="code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" required placeholder="123456" class="w-full px-4 py-3 text-center text-xl tracking-[0.3em] font-bold border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/>
+            </div>
+            <p id="verify-error" class="text-sm text-red-600 hidden"></p>
+            <p id="verify-ok" class="text-sm text-green-600 hidden"></p>
+            <button type="submit" id="verify-btn" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl">Verify &amp; continue</button>
+            <button type="button" id="resend-btn" class="w-full py-2.5 text-sm font-semibold text-brand-600">Resend code</button>
+            <button type="button" id="back-login-btn" class="w-full py-2 text-sm text-slate-500">Back to login</button>
+          </form>
+        </div>
+
         <!-- REGISTER -->
         <div id="panel-register" class="hidden">
           <h1 class="font-display text-2xl font-extrabold text-slate-900 mb-1">Create free account</h1>
@@ -148,8 +165,9 @@
     };
 
     function showVerify(email) {
-      window._verifyEmail = email;
-      document.getElementById("verify-email-label").textContent = email;
+      window._verifyEmail = email || "";
+      var label = document.getElementById("verify-email-label");
+      if (label) label.textContent = window._verifyEmail;
       switchMode("verify");
     }
 
@@ -254,7 +272,7 @@
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || "Registration failed");
         if (data.need_verification) {
-          if (data.dev_code) {
+          if (data.dev_code && ok) {
             ok.textContent = "Dev mode code: " + data.dev_code;
             ok.classList.remove("hidden");
           }
@@ -282,40 +300,46 @@
     });
 
     
-    document.getElementById("verify-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const err = document.getElementById("verify-error");
-      const ok = document.getElementById("verify-ok");
-      const btn = document.getElementById("verify-btn");
-      err.classList.add("hidden");
-      ok.classList.add("hidden");
-      btn.disabled = true;
-      btn.textContent = "Verifying…";
-      try {
-        const code = new FormData(e.target).get("code");
-        const res = await fetch(API + "/auth/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: window._verifyEmail, code })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Verification failed");
-        ok.textContent = data.message || "Verified! You can log in.";
-        ok.classList.remove("hidden");
-        setTimeout(() => switchMode("login"), 800);
-      } catch (ex) {
-        err.textContent = ex.message;
-        err.classList.remove("hidden");
-      }
-      btn.disabled = false;
-      btn.textContent = "Verify & continue";
-    });
+    
+    var verifyForm = document.getElementById("verify-form");
+    if (verifyForm) {
+      verifyForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const err = document.getElementById("verify-error");
+        const ok = document.getElementById("verify-ok");
+        const btn = document.getElementById("verify-btn");
+        if (err) err.classList.add("hidden");
+        if (ok) ok.classList.add("hidden");
+        if (btn) { btn.disabled = true; btn.textContent = "Verifying…"; }
+        try {
+          const code = new FormData(e.target).get("code");
+          const res = await fetch(API + "/auth/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: window._verifyEmail, code })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Verification failed");
+          if (ok) {
+            ok.textContent = data.message || "Verified! You can log in.";
+            ok.classList.remove("hidden");
+          }
+          setTimeout(() => switchMode("login"), 800);
+        } catch (ex) {
+          if (err) {
+            err.textContent = ex.message;
+            err.classList.remove("hidden");
+          }
+        }
+        if (btn) { btn.disabled = false; btn.textContent = "Verify & continue"; }
+      });
+    }
 
     async function resendCode() {
       const err = document.getElementById("verify-error");
       const ok = document.getElementById("verify-ok");
-      err.classList.add("hidden");
-      ok.classList.add("hidden");
+      if (err) err.classList.add("hidden");
+      if (ok) ok.classList.add("hidden");
       try {
         const res = await fetch(API + "/auth/resend-code", {
           method: "POST",
@@ -324,14 +348,22 @@
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Could not resend");
-        ok.textContent = data.dev_code ? ("Dev code: " + data.dev_code) : (data.message || "Code resent");
-        ok.classList.remove("hidden");
+        if (ok) {
+          ok.textContent = data.dev_code ? ("Dev code: " + data.dev_code) : (data.message || "Code resent");
+          ok.classList.remove("hidden");
+        }
       } catch (ex) {
-        err.textContent = ex.message;
-        err.classList.remove("hidden");
+        if (err) {
+          err.textContent = ex.message;
+          err.classList.remove("hidden");
+        }
       }
     }
 
+    var resendBtn = document.getElementById("resend-btn");
+    if (resendBtn) resendBtn.addEventListener("click", resendCode);
+    var backBtn = document.getElementById("back-login-btn");
+    if (backBtn) backBtn.addEventListener("click", function () { switchMode("login"); });
 
     // Open register tab if ?register=1 or #register
     if (location.search.includes("register") || location.hash === "#register") {
