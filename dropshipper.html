@@ -258,22 +258,86 @@ async function createOrder() {
   }
 }
 
+
 async function loadMyProducts() {
   var data = await api("/me/products");
-  var header = '<div class="sm:col-span-2 lg:col-span-3 flex justify-end mb-1"><button onclick="pushAllMyProducts()" class="px-4 py-2 text-xs font-bold bg-[#96bf48] text-white rounded-xl"><i class="fab fa-shopify mr-1"></i> Push all to Shopify</button></div>';
-  var cards = (data.products || []).map(function (p) {
+  window._myProducts = data.products || [];
+  var header =
+    '<div class="sm:col-span-2 lg:col-span-3 flex flex-wrap gap-2 justify-between items-center mb-2">' +
+    '<p class="text-xs text-slate-500">Edit your sell price before pushing to Shopify. SKU stays as Zamrud SKU for order matching.</p>' +
+    '<div class="flex flex-wrap gap-2">' +
+    '<button onclick="saveBulkPrices()" class="px-3 py-2 text-xs font-bold border border-brand-200 text-brand-700 rounded-xl">Save all prices</button>' +
+    '<button onclick="pushAllMyProducts()" class="px-4 py-2 text-xs font-bold bg-[#96bf48] text-white rounded-xl"><i class="fab fa-shopify mr-1"></i> Push all to Shopify</button>' +
+    '</div></div>';
+
+  var cards = window._myProducts.map(function (p, i) {
     var media = p.image_key
       ? '<img src="' + API + '/images/' + p.image_key + '" class="w-12 h-12 object-cover rounded-lg"/>'
       : '<div class="text-2xl">' + (p.emoji || "📦") + '</div>';
-    return '<div class="bg-white rounded-2xl border p-4"><div class="flex gap-3 items-start">' + media +
-      '<div class="flex-1 min-w-0"><div class="font-semibold text-sm">' + p.name + '</div>' +
-      '<div class="text-xs text-slate-400">SKU ' + (p.sku || "") + ' · Cost ' + p.cost_aed + ' · Sell ' + p.sell_price_aed + '</div>' +
-      '<div class="text-xs font-semibold text-brand-600 mt-1">+' + (p.sell_price_aed - p.cost_aed - 18).toFixed(0) + ' profit est.</div>' +
-      '<button onclick="pushOneToShopify(\'' + p.id + '\')" class="mt-2 text-xs font-bold text-[#5e8e3e] hover:underline"><i class="fab fa-shopify"></i> Push to Shopify</button>' +
-      '</div></div></div>';
+    var profit = (Number(p.sell_price_aed) - Number(p.cost_aed) - 18).toFixed(0);
+    return (
+      '<div class="bg-white rounded-2xl border p-4" data-idx="' + i + '">' +
+      '<div class="flex gap-3 items-start">' + media +
+      '<div class="flex-1 min-w-0">' +
+      '<div class="font-semibold text-sm">' + p.name + '</div>' +
+      '<div class="text-xs text-slate-400">SKU <span class="font-mono text-slate-600">' + (p.sku || "") + '</span> · Cost ' + p.cost_aed + ' AED · ' + (p.category || "") + '</div>' +
+      '<div class="mt-2 flex flex-wrap items-center gap-2">' +
+      '<label class="text-xs text-slate-500">Sell (AED)</label>' +
+      '<input type="number" class="my-price w-24 px-2 py-1 text-sm border rounded-lg" data-id="' + p.id + '" value="' + p.sell_price_aed + '"/>' +
+      '<button onclick="saveOnePrice(\'' + p.id + '\')" class="text-xs font-semibold text-brand-600">Save</button>' +
+      '</div>' +
+      '<div class="text-xs font-semibold text-brand-600 mt-1">Profit est. +' + profit + ' AED</div>' +
+      '<div class="mt-2 flex flex-wrap gap-2">' +
+      '<button onclick="openPushEditor(\'' + p.id + '\')" class="text-xs font-bold text-[#5e8e3e] hover:underline"><i class="fab fa-shopify"></i> Push to Shopify…</button>' +
+      '</div></div></div></div>'
+    );
   }).join("") || '<p class="text-slate-400 text-sm sm:col-span-2">No products yet — add from Catalog first</p>';
+
   document.getElementById("my-products").innerHTML = header + cards;
 }
+
+async function saveOnePrice(productId) {
+  var input = document.querySelector('input.my-price[data-id="' + productId + '"]');
+  if (!input) return;
+  try {
+    await api("/me/products", {
+      method: "PATCH",
+      body: JSON.stringify({ product_id: productId, sell_price_aed: Number(input.value) })
+    });
+    loadMyProducts();
+  } catch (e) { alert(e.message); }
+}
+
+async function saveBulkPrices() {
+  var inputs = document.querySelectorAll("input.my-price");
+  var items = [];
+  inputs.forEach(function (inp) {
+    items.push({ product_id: inp.getAttribute("data-id"), sell_price_aed: Number(inp.value) });
+  });
+  if (!items.length) return;
+  try {
+    var data = await api("/me/products/bulk", { method: "POST", body: JSON.stringify({ items: items }) });
+    alert("Saved " + (data.updated || items.length) + " prices");
+    loadMyProducts();
+  } catch (e) { alert(e.message); }
+}
+
+function openPushEditor(productId) {
+  var p = (window._myProducts || []).find(function (x) { return x.id === productId; });
+  if (!p) return;
+  var title = prompt("Shopify title", p.name);
+  if (title === null) return;
+  var price = prompt("Shopify price (AED)", String(p.sell_price_aed));
+  if (price === null) return;
+  var category = prompt("Shopify product type / category", p.category || "General");
+  if (category === null) return;
+  pushOneToShopify(productId, {
+    title: title,
+    sell_price_aed: Number(price),
+    category: category
+  });
+}
+
 
 
 var _catalog = [];
@@ -422,59 +486,7 @@ async function connectShopify() {
 async function syncShop(id) {
   try {
     var data = await api("/shops/" + id + "/sync", { method: "POST", body: "{}" });
-    alert("Imported " + data.imported + " orders (" + data.skipped + " already existed)");
-    loadShops();
-  } catch (e) {
-    alert(e.message);
-  }
-}
-
-
-var _shops = [];
-async function ensureShops() {
-  if (_shops.length) return _shops;
-  try {
-    var data = await api("/shops");
-    _shops = data.shops || [];
-  } catch (e) { _shops = []; }
-  return _shops;
-}
-async function pushOneToShopify(productId) {
-  var shops = await ensureShops();
-  if (!shops.length) {
-    alert("Connect a Shopify store first (Shopify tab)");
-    showTab("shopify");
-    return;
-  }
-  var shopId = shops[0].id;
-  if (shops.length > 1) {
-    var names = shops.map(function (s, i) { return (i + 1) + ". " + s.shop_domain; }).join("\n");
-    var pick = prompt("Push to which store?\n" + names + "\nEnter number:", "1");
-    var idx = Number(pick) - 1;
-    if (!shops[idx]) return;
-    shopId = shops[idx].id;
-  }
-  try {
-    var data = await api("/shops/" + shopId + "/push-product", {
-      method: "POST",
-      body: JSON.stringify({ product_id: productId })
-    });
-    alert("Pushed to Shopify\n" + (data.shopify_admin_url || "OK"));
-  } catch (e) {
-    alert(e.message);
-  }
-}
-async function pushAllMyProducts() {
-  var shops = await ensureShops();
-  if (!shops.length) {
-    alert("Connect a Shopify store first");
-    showTab("shopify");
-    return;
-  }
-  if (!confirm("Push all My Products to " + shops[0].shop_domain + "?")) return;
-  try {
-    var data = await api("/shops/" + shops[0].id + "/push-products", { method: "POST", body: "{}" });
-    alert("Pushed " + data.pushed + " / " + data.total + (data.failed ? (" (" + data.failed + " failed)") : ""));
+    alert("Imported " + data.imported + " Zamrud-SKU orders. Skipped " + data.skipped + " (other products or duplicates).");
   } catch (e) {
     alert(e.message);
   }
