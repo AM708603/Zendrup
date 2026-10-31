@@ -1,274 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zamrud Agency Dashboard</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d9488'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='18' fill='white'%3EZ%3C/text%3E%3C/svg%3E" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: { 50:'#f0fdfa',100:'#ccfbf1',200:'#99f6e4',300:'#5eead4',400:'#2dd4bf',500:'#14b8a6',600:'#0d9488',700:'#0f766e',800:'#115e59',900:'#134e4a',950:'#042f2e' },
-            gold: { 400:'#fbbf24',500:'#f59e0b',600:'#d97706' }
-          },
-          fontFamily: { sans:['Inter','system-ui','sans-serif'], display:['Plus Jakarta Sans','Inter','sans-serif'] }
-        }
-      }
-    }
-  </script>
-  <style>
-    body { font-family: Inter, system-ui, sans-serif; }
-    .font-display { font-family: 'Plus Jakarta Sans', Inter, sans-serif; }
-    .sidebar-link.active { background: #f0fdfa; color: #0f766e; border-right: 3px solid #14b8a6; }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; animation: fade .25s ease; }
-    @keyframes fade { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-  </style>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Zamrud Agency</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d9488'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='18' fill='white'%3EZ%3C/text%3E%3C/svg%3E"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+<script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdfa',100:'#ccfbf1',500:'#14b8a6',600:'#0d9488',700:'#0f766e'}},fontFamily:{sans:['Inter','system-ui'],display:['Plus Jakarta Sans','Inter']}}}}</script>
+<style>body{font-family:Inter,system-ui,sans-serif}.font-display{font-family:'Plus Jakarta Sans',Inter,sans-serif}.sidebar-link.active{background:#f0fdfa;color:#0f766e;border-right:3px solid #14b8a6}.tab-panel{display:none}.tab-panel.active{display:block}</style>
 </head>
 <body class="bg-slate-100 text-slate-800">
-  <div class="min-h-screen flex">
-    <aside class="w-64 bg-white border-r border-slate-200 flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
-      <div class="px-5 py-5 border-b border-slate-100 flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-800 text-white font-display font-extrabold flex items-center justify-center shadow-lg shadow-brand-500/30">Z</div>
-        <div>
-          <div class="font-display font-extrabold text-slate-900 leading-tight">Zamrud</div>
-          <div class="text-[10px] font-bold text-violet-600 uppercase tracking-wider">Agency · Gold</div>
-        </div>
-      </div>
-      <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        <button onclick="showTab('overview')" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="overview"><i class="fas fa-chart-pie w-5 text-center"></i> Overview</button>
-        <button onclick="showTab('clients')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="clients"><i class="fas fa-users w-5 text-center"></i> Clients</button>
-        <button onclick="showTab('orders')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="orders"><i class="fas fa-shopping-bag w-5 text-center"></i> Client Orders</button>
-        <button onclick="showTab('products')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="products"><i class="fas fa-box w-5 text-center"></i> Winning Products</button>
-        <button onclick="showTab('commission')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="commission"><i class="fas fa-coins w-5 text-center"></i> Commission</button>
-        <button onclick="showTab('creatives')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="creatives"><i class="fas fa-images w-5 text-center"></i> Creatives</button>
-        <button onclick="showTab('plan')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="plan"><i class="fas fa-crown w-5 text-center"></i> Plan & Billing</button>
-        <button onclick="showTab('settings')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="settings"><i class="fas fa-cog w-5 text-center"></i> Settings</button>
-      </nav>
-      <div class="p-3 border-t border-slate-100">
-        <div class="flex items-center gap-3 px-3 py-2">
-          <div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">GL</div>
-          <div class="min-w-0"><div class="text-sm font-semibold truncate">GrowthLab Agency</div><div class="text-[11px] text-slate-400">gold@growthlab.ae</div></div>
-        </div>
-      </div>
-    </aside>
-
-    <main class="flex-1 min-w-0">
-      <header class="bg-white border-b border-slate-200 sticky top-0 z-20 px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <button class="lg:hidden p-2 rounded-lg hover:bg-slate-100" onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="fas fa-bars"></i></button>
-          <div>
-            <h1 class="font-display font-extrabold text-slate-900 text-lg" id="page-title">Overview</h1>
-            <p class="text-xs text-slate-400">Agency portal · Manage all clients in one place</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="hidden sm:inline text-xs font-bold bg-violet-50 text-violet-700 px-2.5 py-1 rounded-full">Gold Plan</span>
-          <button class="px-3 py-1.5 text-xs font-medium bg-brand-50 text-brand-700 rounded-lg">Last 30 days</button>
-        </div>
-      </header>
-
-      <div class="p-4 sm:p-6">
-        <!-- OVERVIEW -->
-        <div id="tab-overview" class="tab-panel active space-y-6">
-          <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Agency GMV</div>
-              <div class="font-display text-2xl font-extrabold">48,200 AED</div>
-              <div class="text-xs text-green-600 mt-1">▲ 22% vs last month</div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Your Commission</div>
-              <div class="font-display text-2xl font-extrabold text-brand-700">6,840 AED</div>
-              <div class="text-xs text-slate-400 mt-1">Available Friday</div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Active Clients</div>
-              <div class="font-display text-2xl font-extrabold">14</div>
-              <div class="text-xs text-slate-400 mt-1">3 added this month</div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Client Orders</div>
-              <div class="font-display text-2xl font-extrabold">890</div>
-              <div class="text-xs text-green-600 mt-1">81% delivery rate</div>
-            </div>
-          </div>
-
-          <div class="grid lg:grid-cols-5 gap-5">
-            <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <h3 class="font-semibold text-sm mb-4">Top Clients by GMV</h3>
-              <div class="space-y-3">
-                <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center text-xs font-bold">AS</div><div class="flex-1 min-w-0"><div class="text-sm font-medium">Al-Sultan Store</div><div class="text-xs text-slate-400">Beauty · 210 orders</div></div><div class="text-sm font-semibold">12.4K AED</div></div>
-                <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-violet-50 text-violet-700 flex items-center justify-center text-xs font-bold">NK</div><div class="flex-1 min-w-0"><div class="text-sm font-medium">Nova Kids</div><div class="text-xs text-slate-400">Toys · 168 orders</div></div><div class="text-sm font-semibold">9.1K AED</div></div>
-                <div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center text-xs font-bold">FG</div><div class="flex-1 min-w-0"><div class="text-sm font-medium">FitGear UAE</div><div class="text-xs text-slate-400">Sports · 142 orders</div></div><div class="text-sm font-semibold">8.6K AED</div></div>
-              </div>
-            </div>
-            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <h3 class="font-semibold text-sm mb-4">Commission Breakdown</h3>
-              <div class="space-y-3 text-sm">
-                <div class="flex justify-between"><span class="text-slate-500">Client profits share</span><span class="font-medium">5,920 AED</span></div>
-                <div class="flex justify-between"><span class="text-slate-500">Referral bonus</span><span class="font-medium">420 AED</span></div>
-                <div class="flex justify-between"><span class="text-slate-500">Volume bonus</span><span class="font-medium">500 AED</span></div>
-                <div class="flex justify-between pt-2 border-t border-slate-100 font-semibold text-brand-700"><span>Total</span><span>6,840 AED</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CLIENTS -->
-        <div id="tab-clients" class="tab-panel space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="text-sm text-slate-500">Manage all client stores under your agency account</p>
-            <button class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl hover:bg-brand-700"><i class="fas fa-plus text-xs mr-1"></i> Add Client</button>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <table class="w-full text-sm">
-              <thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Client</th><th class="px-4 py-3">Store</th><th class="px-4 py-3">Orders (30d)</th><th class="px-4 py-3">GMV</th><th class="px-4 py-3">Delivery %</th><th class="px-4 py-3">Status</th></tr></thead>
-              <tbody class="divide-y divide-slate-50">
-                <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium">Al-Sultan Store</td><td class="px-4 py-3">Shopify</td><td class="px-4 py-3">210</td><td class="px-4 py-3">12.4K</td><td class="px-4 py-3">84%</td><td class="px-4 py-3 text-green-600">Active</td></tr>
-                <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium">Nova Kids</td><td class="px-4 py-3">Salla</td><td class="px-4 py-3">168</td><td class="px-4 py-3">9.1K</td><td class="px-4 py-3">79%</td><td class="px-4 py-3 text-green-600">Active</td></tr>
-                <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium">FitGear UAE</td><td class="px-4 py-3">Shopify</td><td class="px-4 py-3">142</td><td class="px-4 py-3">8.6K</td><td class="px-4 py-3">82%</td><td class="px-4 py-3 text-green-600">Active</td></tr>
-                <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium">HomeNest</td><td class="px-4 py-3">Zid</td><td class="px-4 py-3">98</td><td class="px-4 py-3">5.2K</td><td class="px-4 py-3">76%</td><td class="px-4 py-3 text-green-600">Active</td></tr>
-                <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium">Glow Beauty</td><td class="px-4 py-3">Shopify</td><td class="px-4 py-3">12</td><td class="px-4 py-3">0.8K</td><td class="px-4 py-3">—</td><td class="px-4 py-3 text-amber-600">Onboarding</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- ORDERS -->
-        <div id="tab-orders" class="tab-panel space-y-4">
-          <div class="flex flex-wrap gap-2">
-            <button class="px-3 py-1.5 text-xs font-medium bg-brand-600 text-white rounded-lg">All clients</button>
-            <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Al-Sultan</button>
-            <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Nova Kids</button>
-            <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">FitGear</button>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <table class="w-full text-sm">
-              <thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Client</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Total</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Date</th></tr></thead>
-              <tbody class="divide-y divide-slate-50">
-                <tr><td class="px-4 py-3 font-medium text-brand-700">ZM-20481</td><td class="px-4 py-3">Al-Sultan</td><td class="px-4 py-3">Vitamin C Serum</td><td class="px-4 py-3">89 AED</td><td class="px-4 py-3"><span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Delivered</span></td><td class="px-4 py-3 text-slate-400">28 Oct</td></tr>
-                <tr><td class="px-4 py-3 font-medium text-brand-700">ZM-20476</td><td class="px-4 py-3">Nova Kids</td><td class="px-4 py-3">STEM Blocks</td><td class="px-4 py-3">99 AED</td><td class="px-4 py-3"><span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">In Transit</span></td><td class="px-4 py-3 text-slate-400">28 Oct</td></tr>
-                <tr><td class="px-4 py-3 font-medium text-brand-700">ZM-20471</td><td class="px-4 py-3">FitGear</td><td class="px-4 py-3">Resistance Bands</td><td class="px-4 py-3">59 AED</td><td class="px-4 py-3"><span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">Confirmed</span></td><td class="px-4 py-3 text-slate-400">27 Oct</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- PRODUCTS -->
-        <div id="tab-products" class="tab-panel space-y-4">
-          <p class="text-sm text-slate-500">Exclusive winning products for Gold agencies · From our warehouses</p>
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="text-3xl mb-2">🎧</div>
-              <div class="font-semibold text-sm mb-1">ANC Earbuds Pro</div>
-              <div class="text-xs text-slate-400 mb-2">Cost 45 · Sell 129 · Profit +66</div>
-              <span class="text-[10px] font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">HOT</span>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="text-3xl mb-2">🧴</div>
-              <div class="font-semibold text-sm mb-1">Vitamin C Serum</div>
-              <div class="text-xs text-slate-400 mb-2">Cost 28 · Sell 89 · Profit +43</div>
-              <span class="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">HIGH MARGIN</span>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="text-3xl mb-2">⌚</div>
-              <div class="font-semibold text-sm mb-1">Smart Watch Tracker</div>
-              <div class="text-xs text-slate-400 mb-2">Cost 55 · Sell 149 · Profit +76</div>
-              <span class="text-[10px] font-bold bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">TRENDING</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- COMMISSION -->
-        <div id="tab-commission" class="tab-panel space-y-4">
-          <div class="grid sm:grid-cols-3 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm"><div class="text-xs text-slate-500 mb-1">Available</div><div class="font-display text-2xl font-extrabold text-brand-700">6,840 AED</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm"><div class="text-xs text-slate-500 mb-1">Pending</div><div class="font-display text-2xl font-extrabold">1,220 AED</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm"><div class="text-xs text-slate-500 mb-1">Paid (all time)</div><div class="font-display text-2xl font-extrabold">42,600 AED</div></div>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="px-5 py-3 border-b border-slate-100 font-semibold text-sm">Recent payouts</div>
-            <div class="divide-y divide-slate-50 text-sm">
-              <div class="px-5 py-3 flex justify-between"><span>Weekly commission · 25 Oct</span><span class="font-semibold text-green-600">+5,120 AED</span></div>
-              <div class="px-5 py-3 flex justify-between"><span>Weekly commission · 18 Oct</span><span class="font-semibold text-green-600">+4,890 AED</span></div>
-              <div class="px-5 py-3 flex justify-between"><span>Volume bonus · Oct</span><span class="font-semibold text-green-600">+500 AED</span></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CREATIVES -->
-        <div id="tab-creatives" class="tab-panel space-y-4">
-          <p class="text-sm text-slate-500">Winning ad creatives & strategy packs for your clients</p>
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="font-semibold mb-1">Beauty · Serum Pack</div>
-              <p class="text-xs text-slate-500 mb-3">5 creatives · Meta & TikTok · Arabic + English</p>
-              <button class="text-sm font-semibold text-brand-600">Download →</button>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="font-semibold mb-1">Gadgets · Earbuds Pack</div>
-              <p class="text-xs text-slate-500 mb-3">8 creatives · UGC style · High CTR</p>
-              <button class="text-sm font-semibold text-brand-600">Download →</button>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="font-semibold mb-1">Fitness · October Pack</div>
-              <p class="text-xs text-slate-500 mb-3">6 creatives · Hooks + angles</p>
-              <button class="text-sm font-semibold text-brand-600">Download →</button>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="font-semibold mb-1">Strategy Guide · COD UAE</div>
-              <p class="text-xs text-slate-500 mb-3">PDF · Confirmation scripts · Pricing</p>
-              <button class="text-sm font-semibold text-brand-600">Download →</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- PLAN -->
-        <div id="tab-plan" class="tab-panel space-y-4">
-          <div class="bg-gradient-to-br from-violet-600 to-brand-800 rounded-2xl p-6 text-white">
-            <div class="text-sm font-bold opacity-80 mb-1">Current plan</div>
-            <div class="font-display text-2xl font-extrabold mb-1">Gold</div>
-            <div class="text-sm opacity-90 mb-4">$120 / month · Renews 15 Nov 2026</div>
-            <div class="flex flex-wrap gap-2">
-              <span class="text-xs bg-white/15 px-2.5 py-1 rounded-full">Unlimited clients</span>
-              <span class="text-xs bg-white/15 px-2.5 py-1 rounded-full">Winning products</span>
-              <span class="text-xs bg-white/15 px-2.5 py-1 rounded-full">Priority support</span>
-            </div>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <h3 class="font-semibold mb-2">Upgrade to Diamond</h3>
-            <p class="text-sm text-slate-500 mb-3">Dedicated senior manager, custom commission rates, co-branded materials.</p>
-            <button class="px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-xl">View Diamond</button>
-          </div>
-        </div>
-
-        <!-- SETTINGS -->
-        <div id="tab-settings" class="tab-panel">
-          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm max-w-lg space-y-4">
-            <h3 class="font-semibold">Agency Settings</h3>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Agency name</label><input type="text" value="GrowthLab Agency" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500" /></div>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Payout method</label><select class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500"><option>UAE Bank Transfer</option><option>Binance USDT</option></select></div>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">WhatsApp</label><input type="tel" value="+971 50 987 6543" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500" /></div>
-            <button class="px-5 py-2.5 bg-brand-600 text-white text-sm font-bold rounded-xl">Save</button>
-          </div>
-        </div>
-      </div>
-    </main>
+<div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl border shadow-lg p-8 w-full max-w-md">
+    <div class="text-center mb-6"><div class="w-12 h-12 mx-auto rounded-xl bg-brand-600 text-white font-display font-extrabold text-xl flex items-center justify-center mb-3">Z</div>
+    <h1 class="font-display font-extrabold text-xl">Zamrud Agency</h1><p class="text-sm text-slate-500">Partner portal</p></div>
+    <form id="login-form" class="space-y-4">
+      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Email</label><input name="email" type="email" value="agency@growthlab.ae" required class="w-full px-3 py-2.5 text-sm border rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
+      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Password</label><input name="password" type="password" value="password123" required class="w-full px-3 py-2.5 text-sm border rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
+      <p id="login-error" class="text-sm text-red-600 hidden"></p>
+      <button class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl">Sign in</button>
+    </form>
   </div>
-  <script>
-    const titles = { overview:'Overview', clients:'Clients', orders:'Client Orders', products:'Winning Products', commission:'Commission', creatives:'Creatives', plan:'Plan & Billing', settings:'Settings' };
-    function showTab(id) {
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById('tab-' + id).classList.add('active');
-      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.toggle('active', l.dataset.tab === id));
-      document.getElementById('page-title').textContent = titles[id] || id;
-    }
-  </script>
+</div>
+<div id="app" class="min-h-screen flex hidden">
+  <aside class="w-64 bg-white border-r flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
+    <div class="px-5 py-5 border-b flex items-center gap-2.5"><div class="w-9 h-9 rounded-xl bg-brand-600 text-white font-display font-extrabold flex items-center justify-center">Z</div><div><div class="font-display font-extrabold">Zamrud</div><div class="text-[10px] font-bold text-violet-600 uppercase">Agency</div></div></div>
+    <nav class="flex-1 p-3 space-y-0.5">
+      <button onclick="showTab('overview')" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="overview"><i class="fas fa-chart-pie w-5 text-center"></i> Overview</button>
+      <button onclick="showTab('orders')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="orders"><i class="fas fa-shopping-bag w-5 text-center"></i> Client Orders</button>
+      <button onclick="showTab('payouts')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="payouts"><i class="fas fa-coins w-5 text-center"></i> Commission</button>
+    </nav>
+    <div class="p-3 border-t"><div class="flex items-center gap-3 px-3 py-2"><div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold" id="avatar">A</div><div class="min-w-0 flex-1"><div class="text-sm font-semibold truncate" id="user-name">Agency</div><div class="text-[11px] text-slate-400" id="user-email"></div></div><button onclick="logout()" class="text-slate-400 hover:text-red-500"><i class="fas fa-sign-out-alt"></i></button></div></div>
+  </aside>
+  <main class="flex-1 min-w-0">
+    <header class="bg-white border-b sticky top-0 z-20 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3"><button class="lg:hidden p-2" onclick="document.querySelector('aside').classList.toggle('hidden');document.querySelector('aside').classList.toggle('flex')"><i class="fas fa-bars"></i></button><h1 class="font-display font-extrabold text-lg" id="page-title">Overview</h1></div>
+      <span class="text-xs font-bold bg-violet-50 text-violet-700 px-2.5 py-1 rounded-full">Agency</span>
+    </header>
+    <div class="p-4 sm:p-6">
+      <div id="tab-overview" class="tab-panel active space-y-4">
+        <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="bg-white rounded-2xl border p-5"><div class="text-xs text-slate-500 uppercase mb-2">Client GMV</div><div class="font-display text-2xl font-extrabold" id="stat-gmv">—</div></div>
+          <div class="bg-white rounded-2xl border p-5"><div class="text-xs text-slate-500 uppercase mb-2">Orders</div><div class="font-display text-2xl font-extrabold" id="stat-orders">—</div></div>
+          <div class="bg-white rounded-2xl border p-5"><div class="text-xs text-slate-500 uppercase mb-2">Delivered</div><div class="font-display text-2xl font-extrabold" id="stat-delivered">—</div></div>
+          <div class="bg-white rounded-2xl border p-5"><div class="text-xs text-slate-500 uppercase mb-2">Client profit</div><div class="font-display text-2xl font-extrabold text-brand-700" id="stat-profit">—</div></div>
+        </div>
+      </div>
+      <div id="tab-orders" class="tab-panel"><div class="bg-white rounded-2xl border overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Total</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Date</th></tr></thead><tbody id="orders-body" class="divide-y"></tbody></table></div></div></div>
+      <div id="tab-payouts" class="tab-panel"><div class="bg-white rounded-2xl border overflow-hidden"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">ID</th><th class="px-4 py-3">Amount</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Date</th></tr></thead><tbody id="payouts-body" class="divide-y"></tbody></table></div></div>
+    </div>
+  </main>
+</div>
+<script>
+const API="https://zamrud.borntow2.workers.dev";
+const TOKEN_KEY="zamrud_token_agency"; const USER_KEY="zamrud_user_agency";
+function token(){return localStorage.getItem(TOKEN_KEY)}
+function currentUser(){try{return JSON.parse(localStorage.getItem(USER_KEY)||"null")}catch{return null}}
+async function api(path,opts={}){const headers={"Content-Type":"application/json",...(opts.headers||{})};if(token())headers.Authorization="Bearer "+token();const res=await fetch(API+path,{...opts,headers});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||res.statusText);return data}
+function showTab(id){document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));document.getElementById("tab-"+id).classList.add("active");document.querySelectorAll(".sidebar-link").forEach(l=>l.classList.toggle("active",l.dataset.tab===id));document.getElementById("page-title").textContent={overview:"Overview",orders:"Client Orders",payouts:"Commission"}[id];if(id==="orders")loadOrders();if(id==="payouts")loadPayouts()}
+async function loadOverview(){const data=await api("/stats");const s=data.stats||{};document.getElementById("stat-gmv").textContent=(s.gmv!=null?Number(s.gmv).toLocaleString():0)+" AED";document.getElementById("stat-orders").textContent=s.total_orders??0;document.getElementById("stat-delivered").textContent=s.delivered??0;document.getElementById("stat-profit").textContent=(s.client_profit!=null?Number(s.client_profit).toLocaleString():0)+" AED"}
+async function loadOrders(){const data=await api("/orders");document.getElementById("orders-body").innerHTML=(data.orders||[]).map(o=>`<tr><td class="px-4 py-3 font-medium text-brand-700">${o.order_number}</td><td class="px-4 py-3">${o.customer_name}</td><td class="px-4 py-3">${o.product_name}</td><td class="px-4 py-3">${o.sell_price_aed} AED</td><td class="px-4 py-3">${o.status}</td><td class="px-4 py-3 text-slate-400">${(o.created_at||"").slice(0,10)}</td></tr>`).join("")||`<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">No client orders yet</td></tr>`}
+async function loadPayouts(){const data=await api("/payouts");document.getElementById("payouts-body").innerHTML=(data.payouts||[]).map(p=>`<tr><td class="px-4 py-3 font-mono text-xs">${p.id}</td><td class="px-4 py-3 font-semibold">${p.amount_aed} AED</td><td class="px-4 py-3">${p.status}</td><td class="px-4 py-3 text-slate-400">${(p.created_at||"").slice(0,10)}</td></tr>`).join("")||`<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">No commission payouts yet</td></tr>`}
+function logout(){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.reload()}
+async function enterApp(){const u=currentUser();if(!u||u.role!=="agency"){alert("Agency account required");logout();return}document.getElementById("login-screen").classList.add("hidden");document.getElementById("app").classList.remove("hidden");document.getElementById("user-name").textContent=u.name;document.getElementById("user-email").textContent=u.email;document.getElementById("avatar").textContent=(u.name||"A")[0].toUpperCase();await loadOverview()}
+document.getElementById("login-form").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);const errEl=document.getElementById("login-error");errEl.classList.add("hidden");try{const data=await api("/auth/login",{method:"POST",body:JSON.stringify({email:fd.get("email"),password:fd.get("password")})});localStorage.setItem(TOKEN_KEY,data.token);localStorage.setItem(USER_KEY,JSON.stringify(data.user));enterApp()}catch(err){errEl.textContent=err.message;errEl.classList.remove("hidden")}});
+if(token()&&currentUser()?.role==="agency")enterApp();
+</script>
 </body>
 </html>
