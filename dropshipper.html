@@ -13,37 +13,30 @@
 <body class="bg-slate-100 text-slate-800">
 
 <script>
-(function(){
-  const API = "https://zamrud.borntow2.workers.dev";
-  const TOKEN_KEY = "zamrud_token_drop";
-  const USER_KEY = "zamrud_user_drop";
-  const REQUIRED_ROLES = ['dropshipper'];
-
-  function token(){ return localStorage.getItem(TOKEN_KEY) || localStorage.getItem("zamrud_token"); }
-  function currentUser(){
+(function() {
+  var TOKEN_KEY = "zamrud_token_drop";
+  var USER_KEY = "zamrud_user_drop";
+  var roles = ['dropshipper'];
+  function getUser() {
     try {
       return JSON.parse(localStorage.getItem(USER_KEY) || localStorage.getItem("zamrud_user") || "null");
-    } catch { return null; }
+    } catch (e) { return null; }
   }
-
-  // If not logged in with correct role, go to unified login
-  const u = currentUser();
-  const tok = token();
-  if (!tok || !u || !REQUIRED_ROLES.includes(u.role)) {
-    // clear stale role keys
+  var token = localStorage.getItem(TOKEN_KEY) || localStorage.getItem("zamrud_token");
+  var user = getUser();
+  if (!token || !user || roles.indexOf(user.role) === -1) {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     location.replace("login.html");
-    return;
+  } else {
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    localStorage.setItem("zamrud_token", token);
+    localStorage.setItem("zamrud_user", JSON.stringify(user));
   }
-
-  // Sync shared keys for consistency
-  localStorage.setItem(TOKEN_KEY, tok);
-  localStorage.setItem(USER_KEY, JSON.stringify(u));
-  if (localStorage.getItem("zamrud_token") !== tok) localStorage.setItem("zamrud_token", tok);
-  localStorage.setItem("zamrud_user", JSON.stringify(u));
 })();
 </script>
+
 
 <div id="app" class="min-h-screen flex">
   <aside class="w-64 bg-white border-r flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
@@ -88,26 +81,158 @@
     </div>
   </main>
 </div>
+
+
 <script>
-const API="https://zamrud.borntow2.workers.dev";
-const TOKEN_KEY="zamrud_token_drop"; const USER_KEY="zamrud_user_drop";
-function token(){return localStorage.getItem(TOKEN_KEY)}
-function currentUser(){try{return JSON.parse(localStorage.getItem(USER_KEY)||"null")}catch{return null}}
-async function api(path,opts={}){const headers={"Content-Type":"application/json",...(opts.headers||{})};if(token())headers.Authorization="Bearer "+token();const res=await fetch(API+path,{...opts,headers});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||res.statusText);return data}
-function showTab(id){document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));document.getElementById("tab-"+id).classList.add("active");document.querySelectorAll(".sidebar-link").forEach(l=>l.classList.toggle("active",l.dataset.tab===id));document.getElementById("page-title").textContent={overview:"Overview",orders:"Orders",products:"My Products",catalog:"Catalog",payouts:"Payouts"}[id];if(id==="orders")loadOrders();if(id==="products")loadMyProducts();if(id==="catalog")loadCatalog();if(id==="payouts")loadPayouts()}
-async function loadOverview(){const data=await api("/stats");const s=data.stats||{};document.getElementById("stat-profit").textContent=(s.profit!=null?Number(s.profit).toLocaleString():0)+" AED";document.getElementById("stat-orders").textContent=s.total_orders??0;document.getElementById("stat-delivered").textContent=s.delivered??0;document.getElementById("stat-pending").textContent=s.pending??0}
-async function loadOrders(){const data=await api("/orders");document.getElementById("orders-body").innerHTML=(data.orders||[]).map(o=>`<tr><td class="px-4 py-3 font-medium text-brand-700">${o.order_number}</td><td class="px-4 py-3">${o.customer_name}</td><td class="px-4 py-3">${o.product_name}</td><td class="px-4 py-3">${o.sell_price_aed} AED</td><td class="px-4 py-3 text-brand-600 font-semibold">+${o.profit_aed}</td><td class="px-4 py-3">${o.status}</td></tr>`).join("")||`<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">No orders</td></tr>`}
-function showNewOrder(){document.getElementById("new-order-form").classList.toggle("hidden");loadCatalogSelect()}
-async function loadCatalogSelect(){const data=await api("/products");const sel=document.getElementById("no-product");sel.innerHTML=(data.products||[]).map(p=>`<option value="${p.id}" data-price="${p.suggested_price_aed}">${p.name} · cost ${p.cost_aed}</option>`).join("");if(data.products?.[0])document.getElementById("no-price").value=data.products[0].suggested_price_aed;sel.onchange=()=>{document.getElementById("no-price").value=sel.selectedOptions[0].dataset.price}}
-async function createOrder(){try{await api("/orders",{method:"POST",body:JSON.stringify({product_id:document.getElementById("no-product").value,customer_name:document.getElementById("no-name").value,customer_phone:document.getElementById("no-phone").value,customer_city:document.getElementById("no-city").value,sell_price_aed:Number(document.getElementById("no-price").value)})});document.getElementById("new-order-form").classList.add("hidden");loadOrders();loadOverview()}catch(e){alert(e.message)}}
-async function loadMyProducts(){const data=await api("/me/products");document.getElementById("my-products").innerHTML=(data.products||[]).map(p=>`<div class="bg-white rounded-2xl border p-4"><div class="text-2xl mb-1">${p.emoji||"📦"}</div><div class="font-semibold text-sm">${p.name}</div><div class="text-xs text-slate-400">Cost ${p.cost_aed} · Sell ${p.sell_price_aed}</div><div class="text-xs font-semibold text-brand-600 mt-1">+${(p.sell_price_aed-p.cost_aed-18).toFixed(0)} profit est.</div></div>`).join("")||`<p class="text-slate-400 text-sm">No products yet — add from Catalog</p>`}
-async function loadCatalog(){const data=await api("/products");document.getElementById("catalog-grid").innerHTML=(data.products||[]).map(p=>`<div class="bg-white rounded-2xl border p-4"><div class="text-2xl mb-1">${p.emoji||"📦"}</div><div class="font-semibold text-sm">${p.name}</div><div class="text-xs text-slate-400 mb-2">Cost ${p.cost_aed} · Suggested ${p.suggested_price_aed} · Stock ${p.stock}</div><button onclick="addProduct('${p.id}',${p.suggested_price_aed})" class="text-xs font-semibold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg">Add to my list</button></div>`).join("")}
-async function addProduct(id,price){try{await api("/me/products",{method:"POST",body:JSON.stringify({product_id:id,sell_price_aed:price})});alert("Added");showTab("products")}catch(e){alert(e.message)}}
-async function loadPayouts(){const data=await api("/payouts");document.getElementById("payouts-body").innerHTML=(data.payouts||[]).map(p=>`<tr><td class="px-4 py-3 font-mono text-xs">${p.id}</td><td class="px-4 py-3 font-semibold">${p.amount_aed} AED</td><td class="px-4 py-3">${p.status}</td><td class="px-4 py-3 text-slate-400">${(p.created_at||"").slice(0,10)}</td></tr>`).join("")||`<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">No payouts yet</td></tr>`}
-function logout(){localStorage.removeItem("zamrud_token_drop");localStorage.removeItem("zamrud_user_drop");localStorage.removeItem("zamrud_token");localStorage.removeItem("zamrud_user");location.href="login.html";}
-async function enterApp(){const u=currentUser();if(!u||u.role!=="dropshipper"){alert("Dropshipper account required");logout();return}document.getElementById("app").classList.remove("hidden");document.getElementById("user-name").textContent=u.name;document.getElementById("user-email").textContent=u.email;document.getElementById("avatar").textContent=(u.name||"D")[0].toUpperCase();await loadOverview()}
-localStorage.setItem(TOKEN_KEY,data.token);localStorage.setItem(USER_KEY,JSON.stringify(data.user));enterApp()}catch(err){errEl.textContent=err.message;errEl.classList.remove("hidden")}});
+const API = "https://zamrud.borntow2.workers.dev";
+const TOKEN_KEY = "zamrud_token_drop";
+const USER_KEY = "zamrud_user_drop";
+
+function token() {
+  return localStorage.getItem(TOKEN_KEY) || localStorage.getItem("zamrud_token");
+}
+
+function currentUser() {
+  try {
+    return JSON.parse(localStorage.getItem(USER_KEY) || localStorage.getItem("zamrud_user") || "null");
+  } catch (e) {
+    return null;
+  }
+}
+
+async function api(path, opts) {
+  opts = opts || {};
+  var headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
+  if (token()) headers.Authorization = "Bearer " + token();
+  var res = await fetch(API + path, Object.assign({}, opts, { headers: headers }));
+  var data = {};
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+
+function logout() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  localStorage.removeItem("zamrud_token");
+  localStorage.removeItem("zamrud_user");
+  location.href = "login.html";
+}
+
+
+function showTab(id) {
+  document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
+  document.getElementById("tab-" + id).classList.add("active");
+  document.querySelectorAll(".sidebar-link").forEach(function (l) { l.classList.toggle("active", l.dataset.tab === id); });
+  var titles = { overview: "Overview", orders: "Orders", products: "My Products", catalog: "Catalog", payouts: "Payouts" };
+  document.getElementById("page-title").textContent = titles[id] || id;
+  if (id === "orders") loadOrders();
+  if (id === "products") loadMyProducts();
+  if (id === "catalog") loadCatalog();
+  if (id === "payouts") loadPayouts();
+}
+
+async function loadOverview() {
+  var data = await api("/stats");
+  var s = data.stats || {};
+  document.getElementById("stat-profit").textContent = (s.profit != null ? Number(s.profit).toLocaleString() : 0) + " AED";
+  document.getElementById("stat-orders").textContent = s.total_orders != null ? s.total_orders : 0;
+  document.getElementById("stat-delivered").textContent = s.delivered != null ? s.delivered : 0;
+  document.getElementById("stat-pending").textContent = s.pending != null ? s.pending : 0;
+}
+
+async function loadOrders() {
+  var data = await api("/orders");
+  document.getElementById("orders-body").innerHTML = (data.orders || []).map(function (o) {
+    return '<tr><td class="px-4 py-3 font-medium text-brand-700">' + o.order_number + '</td><td class="px-4 py-3">' + o.customer_name + '</td><td class="px-4 py-3">' + o.product_name + '</td><td class="px-4 py-3">' + o.sell_price_aed + ' AED</td><td class="px-4 py-3 text-brand-600 font-semibold">+' + o.profit_aed + '</td><td class="px-4 py-3">' + o.status + "</td></tr>";
+  }).join("") || '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">No orders</td></tr>';
+}
+
+function showNewOrder() {
+  document.getElementById("new-order-form").classList.toggle("hidden");
+  loadCatalogSelect();
+}
+
+async function loadCatalogSelect() {
+  var data = await api("/products");
+  var sel = document.getElementById("no-product");
+  sel.innerHTML = (data.products || []).map(function (p) {
+    return '<option value="' + p.id + '" data-price="' + p.suggested_price_aed + '">' + p.name + " · cost " + p.cost_aed + "</option>";
+  }).join("");
+  if (data.products && data.products[0]) {
+    document.getElementById("no-price").value = data.products[0].suggested_price_aed;
+  }
+  sel.onchange = function () {
+    document.getElementById("no-price").value = sel.selectedOptions[0].dataset.price;
+  };
+}
+
+async function createOrder() {
+  try {
+    await api("/orders", {
+      method: "POST",
+      body: JSON.stringify({
+        product_id: document.getElementById("no-product").value,
+        customer_name: document.getElementById("no-name").value,
+        customer_phone: document.getElementById("no-phone").value,
+        customer_city: document.getElementById("no-city").value,
+        sell_price_aed: Number(document.getElementById("no-price").value)
+      })
+    });
+    document.getElementById("new-order-form").classList.add("hidden");
+    loadOrders();
+    loadOverview();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+async function loadMyProducts() {
+  var data = await api("/me/products");
+  document.getElementById("my-products").innerHTML = (data.products || []).map(function (p) {
+    return '<div class="bg-white rounded-2xl border p-4"><div class="text-2xl mb-1">' + (p.emoji || "📦") + '</div><div class="font-semibold text-sm">' + p.name + '</div><div class="text-xs text-slate-400">Cost ' + p.cost_aed + " · Sell " + p.sell_price_aed + '</div><div class="text-xs font-semibold text-brand-600 mt-1">+' + (p.sell_price_aed - p.cost_aed - 18).toFixed(0) + " profit est.</div></div>";
+  }).join("") || '<p class="text-slate-400 text-sm">No products yet — add from Catalog</p>';
+}
+
+async function loadCatalog() {
+  var data = await api("/products");
+  document.getElementById("catalog-grid").innerHTML = (data.products || []).map(function (p) {
+    return '<div class="bg-white rounded-2xl border p-4"><div class="text-2xl mb-1">' + (p.emoji || "📦") + '</div><div class="font-semibold text-sm">' + p.name + '</div><div class="text-xs text-slate-400 mb-2">Cost ' + p.cost_aed + " · Suggested " + p.suggested_price_aed + " · Stock " + p.stock + '</div><button onclick="addProduct(\'' + p.id + '\',' + p.suggested_price_aed + ')" class="text-xs font-semibold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg">Add to my list</button></div>';
+  }).join("");
+}
+
+async function addProduct(id, price) {
+  try {
+    await api("/me/products", { method: "POST", body: JSON.stringify({ product_id: id, sell_price_aed: price }) });
+    alert("Added");
+    showTab("products");
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+async function loadPayouts() {
+  var data = await api("/payouts");
+  document.getElementById("payouts-body").innerHTML = (data.payouts || []).map(function (p) {
+    return '<tr><td class="px-4 py-3 font-mono text-xs">' + p.id + '</td><td class="px-4 py-3 font-semibold">' + p.amount_aed + ' AED</td><td class="px-4 py-3">' + p.status + '</td><td class="px-4 py-3 text-slate-400">' + (p.created_at || "").slice(0, 10) + "</td></tr>";
+  }).join("") || '<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">No payouts yet</td></tr>';
+}
+
+async function enterApp() {
+  var u = currentUser();
+  if (!u || u.role !== "dropshipper") {
+    logout();
+    return;
+  }
+  document.getElementById("user-name").textContent = u.name;
+  document.getElementById("user-email").textContent = u.email;
+  document.getElementById("avatar").textContent = (u.name || "D").charAt(0).toUpperCase();
+  await loadOverview();
+}
+
 enterApp();
+
 </script>
+
 </body>
 </html>
