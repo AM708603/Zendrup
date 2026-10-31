@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zamrud UAE — Premium Dropshipping with Own Inventory</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d9488'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='18' fill='white'%3EZ%3C/text%3E%3C/svg%3E"/>
   <meta name="description" content="UAE's premium dropshipping platform. Our own local inventory, higher profit margins, agency partner program, weekly payouts." />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -886,29 +885,46 @@
     </div>
   </footer>
 
-  <script>
-    const products = [
-      { id: 1, name: "Wireless ANC Earbuds Pro", category: "Mobile", cost: 45, suggested: 129, profit: 66, stock: 340, tag: "hot", emoji: "🎧", sold: 1240, rating: 4.8 },
-      { id: 2, name: "Vitamin C Brightening Serum 30ml", category: "Beauty", cost: 28, suggested: 89, profit: 43, stock: 520, tag: "hot", emoji: "🧴", sold: 980, rating: 4.7 },
-      { id: 3, name: "LED RGB Strip Lights 5m", category: "Home", cost: 22, suggested: 69, profit: 29, stock: 890, tag: "new", emoji: "💡", sold: 2100, rating: 4.6 },
-      { id: 4, name: "Portable Blender USB Rechargeable", category: "Home", cost: 35, suggested: 99, profit: 46, stock: 210, tag: "high-margin", emoji: "🥤", sold: 670, rating: 4.5 },
-      { id: 5, name: "Smart Watch Fitness Tracker", category: "Sports", cost: 55, suggested: 149, profit: 76, stock: 180, tag: "hot", emoji: "⌚", sold: 890, rating: 4.7 },
-      { id: 6, name: "Car Phone Holder Magnetic", category: "Car", cost: 12, suggested: 39, profit: 9, stock: 1200, tag: null, emoji: "📱", sold: 3400, rating: 4.4 },
-      { id: 7, name: "Hyaluronic Acid Face Cream", category: "Beauty", cost: 32, suggested: 95, profit: 45, stock: 410, tag: "new", emoji: "🧴", sold: 540, rating: 4.8 },
-      { id: 8, name: "Resistance Bands Set (5pcs)", category: "Sports", cost: 18, suggested: 59, profit: 23, stock: 650, tag: null, emoji: "💪", sold: 1100, rating: 4.5 },
-      { id: 9, name: "Mini Portable Projector", category: "Home", cost: 89, suggested: 249, profit: 142, stock: 95, tag: "high-margin", emoji: "📽️", sold: 320, rating: 4.6 },
-      { id: 10, name: "Kids Interactive Learning Tablet", category: "Toys", cost: 48, suggested: 139, profit: 73, stock: 160, tag: "new", emoji: "📱", sold: 280, rating: 4.3 },
-      { id: 11, name: "Wireless Charging Pad 15W", category: "Mobile", cost: 19, suggested: 55, profit: 18, stock: 780, tag: null, emoji: "⚡", sold: 1500, rating: 4.5 },
-      { id: 12, name: "Aromatherapy Diffuser Ultrasonic", category: "Home", cost: 27, suggested: 79, profit: 34, stock: 340, tag: null, emoji: "💨", sold: 720, rating: 4.7 },
-      { id: 13, name: "Niacinamide Face Wash 100ml", category: "Beauty", cost: 15, suggested: 45, profit: 12, stock: 900, tag: null, emoji: "🧼", sold: 1800, rating: 4.6 },
-      { id: 14, name: "Car Vacuum Cleaner Portable", category: "Car", cost: 38, suggested: 109, profit: 53, stock: 220, tag: "hot", emoji: "🧹", sold: 610, rating: 4.4 },
-      { id: 15, name: "Yoga Mat Non-Slip 6mm", category: "Sports", cost: 24, suggested: 69, profit: 27, stock: 480, tag: null, emoji: "🧘", sold: 950, rating: 4.5 },
-      { id: 16, name: "Bluetooth Speaker Waterproof", category: "Mobile", cost: 42, suggested: 119, profit: 59, stock: 290, tag: "high-margin", emoji: "🔊", sold: 780, rating: 4.7 },
-      { id: 17, name: "Silicone Kitchen Utensil Set", category: "Home", cost: 21, suggested: 65, profit: 26, stock: 550, tag: null, emoji: "🍳", sold: 430, rating: 4.3 },
-      { id: 18, name: "Building Blocks STEM Set 120pcs", category: "Toys", cost: 36, suggested: 99, profit: 45, stock: 190, tag: "new", emoji: "🧱", sold: 210, rating: 4.6 },
-    ];
-
+  
+<script>
+    const API = "https://zamrud.borntow2.workers.dev";
+    let products = [];
     let activeTags = new Set();
+
+    function mapApiProduct(p) {
+      const cost = Number(p.cost_aed) || 0;
+      const suggested = Number(p.suggested_price_aed) || 0;
+      const shipping = 18;
+      return {
+        id: p.id,
+        name: p.name,
+        category: p.category || "Other",
+        cost: cost,
+        suggested: suggested,
+        profit: suggested - cost - shipping,
+        stock: Number(p.stock) || 0,
+        tag: p.tag || null,
+        emoji: p.emoji || "📦",
+        sku: p.sku || "",
+        image_key: p.image_key || null,
+        sold: Number(p.stock) || 0,
+        rating: 4.6,
+        warehouse: p.warehouse || "dubai"
+      };
+    }
+
+    async function loadProductsFromAPI() {
+      try {
+        const res = await fetch(API + "/products");
+        const data = await res.json();
+        products = (data.products || []).map(mapApiProduct);
+      } catch (e) {
+        console.error(e);
+        products = [];
+      }
+      renderHomeProducts();
+      filterProducts();
+    }
 
     function showView(name) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -933,20 +949,19 @@
         : p.tag === 'new' ? '<span class="absolute top-2 left-2 badge-new text-white text-[10px] font-bold px-2 py-0.5 rounded-full">NEW</span>'
         : p.tag === 'high-margin' ? '<span class="absolute top-2 left-2 badge-margin text-white text-[10px] font-bold px-2 py-0.5 rounded-full">HIGH $</span>'
         : '';
+      const media = p.image_key
+        ? '<img src="' + API + '/images/' + p.image_key + '" alt="" class="w-full h-full object-cover"/>'
+        : '<span class="text-5xl">' + (p.emoji || '📦') + '</span>';
       return `
-        <div class="product-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-soft cursor-pointer" onclick="openProduct(${p.id})">
-          <div class="relative bg-gradient-to-b from-slate-50 to-slate-100/50 h-40 flex items-center justify-center text-5xl">
+        <div class="product-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-soft cursor-pointer" onclick="openProduct('${p.id}')">
+          <div class="relative bg-gradient-to-b from-slate-50 to-slate-100/50 h-40 flex items-center justify-center overflow-hidden">
             ${tagBadge}
-            ${p.emoji}
+            ${media}
             ${p.stock < 100 ? '<span class="absolute top-2 right-2 bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full">Low Stock</span>' : ''}
           </div>
           <div class="p-4">
-            <div class="text-xs text-slate-400 mb-1">${p.category}</div>
+            <div class="text-xs text-slate-400 mb-1">${p.category || ''}${p.sku ? ' · ' + p.sku : ''}</div>
             <h3 class="font-semibold text-sm text-slate-800 leading-snug mb-2 line-clamp-2">${p.name}</h3>
-            <div class="flex items-center gap-1 mb-3">
-              <div class="flex text-amber-400 text-xs">${'★'.repeat(Math.floor(p.rating))}${'☆'.repeat(5-Math.floor(p.rating))}</div>
-              <span class="text-xs text-slate-400">(${p.sold})</span>
-            </div>
             <div class="flex items-end justify-between">
               <div>
                 <div class="text-xs text-slate-400">Our cost</div>
@@ -967,7 +982,12 @@
 
     function renderHomeProducts() {
       const container = document.getElementById('home-products');
-      const top = [...products].sort((a,b) => b.sold - a.sold).slice(0, 4);
+      if (!container) return;
+      if (!products.length) {
+        container.innerHTML = '<p class="text-slate-400 text-sm col-span-4 text-center py-8">No products yet. Check back soon.</p>';
+        return;
+      }
+      const top = [...products].sort((a,b) => b.stock - a.stock).slice(0, 4);
       container.innerHTML = top.map(productCard).join('');
     }
 
@@ -980,7 +1000,7 @@
       const sort = document.getElementById('sort-select')?.value || 'popular';
 
       let filtered = products.filter(p => {
-        if (search && !p.name.toLowerCase().includes(search)) return false;
+        if (search && !p.name.toLowerCase().includes(search) && !(p.sku || '').toLowerCase().includes(search)) return false;
         if (cats.length && !cats.includes(p.category)) return false;
         if (p.cost < minP || p.cost > maxP) return false;
         if (inStock && p.stock <= 0) return false;
@@ -988,32 +1008,39 @@
         return true;
       });
 
-      if (sort === 'popular') filtered.sort((a,b) => b.sold - a.sold);
+      if (sort === 'popular') filtered.sort((a,b) => b.stock - a.stock);
       else if (sort === 'profit-desc') filtered.sort((a,b) => b.profit - a.profit);
       else if (sort === 'price-asc') filtered.sort((a,b) => a.cost - b.cost);
       else if (sort === 'price-desc') filtered.sort((a,b) => b.cost - a.cost);
-      else if (sort === 'newest') filtered.sort((a,b) => b.id - a.id);
+      else if (sort === 'newest') filtered.sort((a,b) => String(b.id).localeCompare(String(a.id)));
 
       const grid = document.getElementById('catalog-grid');
       const empty = document.getElementById('empty-state');
-      document.getElementById('product-count').textContent = filtered.length;
+      const countEl = document.getElementById('product-count');
+      if (countEl) countEl.textContent = filtered.length;
 
+      if (!grid) return;
       if (filtered.length === 0) {
         grid.innerHTML = '';
-        empty.classList.remove('hidden');
+        if (empty) empty.classList.remove('hidden');
       } else {
-        empty.classList.add('hidden');
+        if (empty) empty.classList.add('hidden');
         grid.innerHTML = filtered.map(productCard).join('');
       }
     }
 
     function resetFilters() {
-      document.getElementById('search-input').value = '';
+      const s = document.getElementById('search-input');
+      if (s) s.value = '';
       document.querySelectorAll('.filter-cat').forEach(c => c.checked = false);
-      document.getElementById('price-min').value = 0;
-      document.getElementById('price-max').value = 500;
-      document.getElementById('filter-instock').checked = true;
-      document.getElementById('sort-select').value = 'popular';
+      const pmin = document.getElementById('price-min');
+      const pmax = document.getElementById('price-max');
+      if (pmin) pmin.value = 0;
+      if (pmax) pmax.value = 500;
+      const instock = document.getElementById('filter-instock');
+      if (instock) instock.checked = true;
+      const sort = document.getElementById('sort-select');
+      if (sort) sort.value = 'popular';
       activeTags.clear();
       document.querySelectorAll('.tag-btn').forEach(b => {
         b.classList.remove('bg-brand-600', 'text-white', 'border-brand-600');
@@ -1036,25 +1063,24 @@
     }
 
     function openProduct(id) {
-      const p = products.find(x => x.id === id);
+      const p = products.find(x => String(x.id) === String(id));
       if (!p) return;
       const shipping = 18;
       const netProfit = p.suggested - p.cost - shipping;
+      const media = p.image_key
+        ? '<img src="' + API + '/images/' + p.image_key + '" class="w-full h-full object-cover rounded-2xl" alt=""/>'
+        : '<div class="text-7xl">' + (p.emoji || '📦') + '</div>';
       document.getElementById('modal-content').innerHTML = `
         <div class="flex items-start justify-between mb-6">
           <div>
-            <div class="text-xs text-slate-400 mb-1">${p.category} · Our Warehouse</div>
+            <div class="text-xs text-slate-400 mb-1">${p.category || ''} · Our Warehouse${p.sku ? ' · ' + p.sku : ''}</div>
             <h2 class="text-xl font-bold text-slate-900">${p.name}</h2>
           </div>
           <button onclick="closeProductModal()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400"><i class="fas fa-times"></i></button>
         </div>
         <div class="grid md:grid-cols-2 gap-8">
-          <div class="bg-gradient-to-b from-slate-50 to-slate-100 rounded-2xl h-56 flex items-center justify-center text-7xl">${p.emoji}</div>
+          <div class="bg-gradient-to-b from-slate-50 to-slate-100 rounded-2xl h-56 flex items-center justify-center overflow-hidden">${media}</div>
           <div>
-            <div class="flex items-center gap-2 mb-4">
-              <div class="flex text-amber-400">${'★'.repeat(Math.floor(p.rating))}</div>
-              <span class="text-sm text-slate-500">${p.rating} · ${p.sold} sold</span>
-            </div>
             <div class="grid grid-cols-2 gap-3 mb-5">
               <div class="bg-slate-50 rounded-xl p-3"><div class="text-xs text-slate-400">Our Cost</div><div class="text-lg font-bold">${p.cost} AED</div></div>
               <div class="bg-slate-50 rounded-xl p-3"><div class="text-xs text-slate-400">Suggested Price</div><div class="text-lg font-bold">${p.suggested} AED</div></div>
@@ -1069,8 +1095,7 @@
               <div class="flex justify-between font-bold text-brand-700 pt-2 border-t border-slate-200"><span>Net Profit</span><span>+${netProfit} AED</span></div>
             </div>
             <div class="flex gap-2">
-              <button class="flex-1 py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition">Add to My Products</button>
-              <button class="px-4 py-3 border border-slate-200 hover:bg-slate-50 rounded-xl transition"><i class="far fa-heart"></i></button>
+              <a href="login.html?register=1" class="flex-1 text-center py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition">Start Selling</a>
             </div>
           </div>
         </div>
@@ -1085,13 +1110,13 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      renderHomeProducts();
-      filterProducts();
+      loadProductsFromAPI();
     });
 
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closeProductModal();
     });
   </script>
+
 </body>
 </html>
