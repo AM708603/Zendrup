@@ -13,37 +13,30 @@
 <body class="bg-slate-100 text-slate-800">
 
 <script>
-(function(){
-  const API = "https://zamrud.borntow2.workers.dev";
-  const TOKEN_KEY = "zamrud_token_staff";
-  const USER_KEY = "zamrud_user_staff";
-  const REQUIRED_ROLES = ['staff','admin'];
-
-  function token(){ return localStorage.getItem(TOKEN_KEY) || localStorage.getItem("zamrud_token"); }
-  function currentUser(){
+(function() {
+  var TOKEN_KEY = "zamrud_token_staff";
+  var USER_KEY = "zamrud_user_staff";
+  var roles = ['staff','admin'];
+  function getUser() {
     try {
       return JSON.parse(localStorage.getItem(USER_KEY) || localStorage.getItem("zamrud_user") || "null");
-    } catch { return null; }
+    } catch (e) { return null; }
   }
-
-  // If not logged in with correct role, go to unified login
-  const u = currentUser();
-  const tok = token();
-  if (!tok || !u || !REQUIRED_ROLES.includes(u.role)) {
-    // clear stale role keys
+  var token = localStorage.getItem(TOKEN_KEY) || localStorage.getItem("zamrud_token");
+  var user = getUser();
+  if (!token || !user || roles.indexOf(user.role) === -1) {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     location.replace("login.html");
-    return;
+  } else {
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    localStorage.setItem("zamrud_token", token);
+    localStorage.setItem("zamrud_user", JSON.stringify(user));
   }
-
-  // Sync shared keys for consistency
-  localStorage.setItem(TOKEN_KEY, tok);
-  localStorage.setItem(USER_KEY, JSON.stringify(u));
-  if (localStorage.getItem("zamrud_token") !== tok) localStorage.setItem("zamrud_token", tok);
-  localStorage.setItem("zamrud_user", JSON.stringify(u));
 })();
 </script>
+
 
 <div id="app" class="min-h-screen flex">
   <aside class="w-64 bg-white border-r flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
@@ -74,21 +67,111 @@
     </div>
   </main>
 </div>
+
+
 <script>
-const API="https://zamrud.borntow2.workers.dev";
-const TOKEN_KEY="zamrud_token_staff"; const USER_KEY="zamrud_user_staff";
-function token(){return localStorage.getItem(TOKEN_KEY)}
-function currentUser(){try{return JSON.parse(localStorage.getItem(USER_KEY)||"null")}catch{return null}}
-async function api(path,opts={}){const headers={"Content-Type":"application/json",...(opts.headers||{})};if(token())headers.Authorization="Bearer "+token();const res=await fetch(API+path,{...opts,headers});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||res.statusText);return data}
-function showTab(id){document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));document.getElementById("tab-"+id).classList.add("active");document.querySelectorAll(".sidebar-link").forEach(l=>l.classList.toggle("active",l.dataset.tab===id));document.getElementById("page-title").textContent=id==="queue"?"My Queue":"Orders";if(id==="orders")loadOrders();if(id==="queue")loadTasks()}
-async function loadTasks(){const data=await api("/tasks");const tasks=data.tasks||[];document.getElementById("stat-tasks").textContent=tasks.length;document.getElementById("stat-cod").textContent=tasks.filter(t=>t.type==="cod").length;document.getElementById("stat-pack").textContent=tasks.filter(t=>t.type==="pack").length;document.getElementById("tasks-list").innerHTML=tasks.map(t=>`<div class="px-5 py-3.5 flex items-center gap-3"><span class="text-xs font-bold px-2 py-0.5 rounded ${t.type==="cod"?"bg-amber-100 text-amber-700":"bg-blue-100 text-blue-700"}">${t.type.toUpperCase()}</span><div class="flex-1"><div class="font-medium">${t.order_number} · ${t.customer_name} · ${t.customer_phone||""}</div><div class="text-xs text-slate-400">${t.product_name} · ${t.sell_price_aed} AED · order: ${t.order_status}</div></div><button onclick="doneTask('${t.id}')" class="px-3 py-1.5 text-xs font-semibold bg-brand-600 text-white rounded-lg">Done</button></div>`).join("")||`<div class="px-5 py-8 text-center text-slate-400">No open tasks</div>`}
-async function doneTask(id){try{await api("/tasks/"+id+"/done",{method:"POST",body:"{}" });loadTasks()}catch(e){alert(e.message)}}
-async function loadOrders(){const data=await api("/orders");document.getElementById("orders-body").innerHTML=(data.orders||[]).map(o=>`<tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">${o.order_number}</td><td class="px-4 py-3">${o.customer_name}</td><td class="px-4 py-3">${o.customer_phone}</td><td class="px-4 py-3">${o.product_name}</td><td class="px-4 py-3">${o.status}</td><td class="px-4 py-3">${o.status==="pending"?`<button onclick="setStatus('${o.id}','confirmed')" class="text-xs text-brand-600 font-semibold">Confirm</button>`:""}${o.status==="confirmed"?`<button onclick="setStatus('${o.id}','shipped')" class="text-xs text-brand-600 font-semibold">Ship</button>`:""}${o.status==="shipped"?`<button onclick="setStatus('${o.id}','delivered')" class="text-xs text-green-600 font-semibold">Deliver</button>`:""}</td></tr>`).join("")||`<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">No orders</td></tr>`}
-async function setStatus(id,status){try{await api("/orders/"+id,{method:"PATCH",body:JSON.stringify({status})});loadOrders();loadTasks()}catch(e){alert(e.message)}}
-function logout(){localStorage.removeItem("zamrud_token_staff");localStorage.removeItem("zamrud_user_staff");localStorage.removeItem("zamrud_token");localStorage.removeItem("zamrud_user");location.href="login.html";}
-async function enterApp(){const u=currentUser();if(!u||(u.role!=="staff"&&u.role!=="admin")){alert("Staff account required");logout();return}document.getElementById("app").classList.remove("hidden");document.getElementById("user-name").textContent=u.name;document.getElementById("user-email").textContent=u.email;document.getElementById("avatar").textContent=(u.name||"S")[0].toUpperCase();await loadTasks()}
-localStorage.setItem(TOKEN_KEY,data.token);localStorage.setItem(USER_KEY,JSON.stringify(data.user));enterApp()}catch(err){errEl.textContent=err.message;errEl.classList.remove("hidden")}});
+const API = "https://zamrud.borntow2.workers.dev";
+const TOKEN_KEY = "zamrud_token_staff";
+const USER_KEY = "zamrud_user_staff";
+
+function token() {
+  return localStorage.getItem(TOKEN_KEY) || localStorage.getItem("zamrud_token");
+}
+
+function currentUser() {
+  try {
+    return JSON.parse(localStorage.getItem(USER_KEY) || localStorage.getItem("zamrud_user") || "null");
+  } catch (e) {
+    return null;
+  }
+}
+
+async function api(path, opts) {
+  opts = opts || {};
+  var headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
+  if (token()) headers.Authorization = "Bearer " + token();
+  var res = await fetch(API + path, Object.assign({}, opts, { headers: headers }));
+  var data = {};
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+}
+
+function logout() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  localStorage.removeItem("zamrud_token");
+  localStorage.removeItem("zamrud_user");
+  location.href = "login.html";
+}
+
+
+function showTab(id) {
+  document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
+  document.getElementById("tab-" + id).classList.add("active");
+  document.querySelectorAll(".sidebar-link").forEach(function (l) { l.classList.toggle("active", l.dataset.tab === id); });
+  document.getElementById("page-title").textContent = id === "queue" ? "My Queue" : "Orders";
+  if (id === "orders") loadOrders();
+  if (id === "queue") loadTasks();
+}
+
+async function loadTasks() {
+  var data = await api("/tasks");
+  var tasks = data.tasks || [];
+  document.getElementById("stat-tasks").textContent = tasks.length;
+  document.getElementById("stat-cod").textContent = tasks.filter(function (t) { return t.type === "cod"; }).length;
+  document.getElementById("stat-pack").textContent = tasks.filter(function (t) { return t.type === "pack"; }).length;
+  document.getElementById("tasks-list").innerHTML = tasks.map(function (t) {
+    var badge = t.type === "cod" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700";
+    return '<div class="px-5 py-3.5 flex items-center gap-3"><span class="text-xs font-bold px-2 py-0.5 rounded ' + badge + '">' + t.type.toUpperCase() + '</span><div class="flex-1"><div class="font-medium">' + t.order_number + " · " + t.customer_name + " · " + (t.customer_phone || "") + '</div><div class="text-xs text-slate-400">' + t.product_name + " · " + t.sell_price_aed + " AED · order: " + t.order_status + '</div></div><button onclick="doneTask(\'' + t.id + '\')" class="px-3 py-1.5 text-xs font-semibold bg-brand-600 text-white rounded-lg">Done</button></div>';
+  }).join("") || '<div class="px-5 py-8 text-center text-slate-400">No open tasks</div>';
+}
+
+async function doneTask(id) {
+  try {
+    await api("/tasks/" + id + "/done", { method: "POST", body: "{}" });
+    loadTasks();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+async function loadOrders() {
+  var data = await api("/orders");
+  document.getElementById("orders-body").innerHTML = (data.orders || []).map(function (o) {
+    var actions = "";
+    if (o.status === "pending") actions = '<button onclick="setStatus(\'' + o.id + '\',\'confirmed\')" class="text-xs text-brand-600 font-semibold">Confirm</button>';
+    if (o.status === "confirmed") actions = '<button onclick="setStatus(\'' + o.id + '\',\'shipped\')" class="text-xs text-brand-600 font-semibold">Ship</button>';
+    if (o.status === "shipped") actions = '<button onclick="setStatus(\'' + o.id + '\',\'delivered\')" class="text-xs text-green-600 font-semibold">Deliver</button>';
+    return '<tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">' + o.order_number + '</td><td class="px-4 py-3">' + o.customer_name + '</td><td class="px-4 py-3">' + o.customer_phone + '</td><td class="px-4 py-3">' + o.product_name + '</td><td class="px-4 py-3">' + o.status + '</td><td class="px-4 py-3">' + actions + "</td></tr>";
+  }).join("") || '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">No orders</td></tr>';
+}
+
+async function setStatus(id, status) {
+  try {
+    await api("/orders/" + id, { method: "PATCH", body: JSON.stringify({ status: status }) });
+    loadOrders();
+    loadTasks();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+async function enterApp() {
+  var u = currentUser();
+  if (!u || (u.role !== "staff" && u.role !== "admin")) {
+    logout();
+    return;
+  }
+  document.getElementById("user-name").textContent = u.name;
+  document.getElementById("user-email").textContent = u.email;
+  document.getElementById("avatar").textContent = (u.name || "S").charAt(0).toUpperCase();
+  await loadTasks();
+}
+
 enterApp();
+
 </script>
+
 </body>
 </html>
