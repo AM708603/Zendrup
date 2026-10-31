@@ -12,22 +12,41 @@
   <style>body{font-family:Inter,system-ui,sans-serif}.font-display{font-family:'Plus Jakarta Sans',Inter,sans-serif}.sidebar-link.active{background:#f0fdfa;color:#0f766e;border-right:3px solid #14b8a6}.tab-panel{display:none}.tab-panel.active{display:block}</style>
 </head>
 <body class="bg-slate-100 text-slate-800">
-<div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl border border-slate-200 shadow-lg p-8 w-full max-w-md">
-    <div class="text-center mb-6">
-      <div class="w-12 h-12 mx-auto rounded-xl bg-brand-600 text-white font-display font-extrabold text-xl flex items-center justify-center mb-3">Z</div>
-      <h1 class="font-display font-extrabold text-xl">Zamrud Admin</h1>
-      <p class="text-sm text-slate-500 mt-1">Sign in to continue</p>
-    </div>
-    <form id="login-form" class="space-y-4">
-      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Email</label><input name="email" type="email" value="admin@zamrud.ae" required class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
-      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Password</label><input name="password" type="password" value="password123" required class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
-      <p id="login-error" class="text-sm text-red-600 hidden"></p>
-      <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl">Sign in</button>
-    </form>
-  </div>
-</div>
-<div id="app" class="min-h-screen flex hidden">
+
+<script>
+(function(){
+  const API = "https://zamrud.borntow2.workers.dev";
+  const TOKEN_KEY = "zamrud_token_admin";
+  const USER_KEY = "zamrud_user_admin";
+  const REQUIRED_ROLES = ['admin'];
+
+  function token(){ return localStorage.getItem(TOKEN_KEY) || localStorage.getItem("zamrud_token"); }
+  function currentUser(){
+    try {
+      return JSON.parse(localStorage.getItem(USER_KEY) || localStorage.getItem("zamrud_user") || "null");
+    } catch { return null; }
+  }
+
+  // If not logged in with correct role, go to unified login
+  const u = currentUser();
+  const tok = token();
+  if (!tok || !u || !REQUIRED_ROLES.includes(u.role)) {
+    // clear stale role keys
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    location.replace("login.html");
+    return;
+  }
+
+  // Sync shared keys for consistency
+  localStorage.setItem(TOKEN_KEY, tok);
+  localStorage.setItem(USER_KEY, JSON.stringify(u));
+  if (localStorage.getItem("zamrud_token") !== tok) localStorage.setItem("zamrud_token", tok);
+  localStorage.setItem("zamrud_user", JSON.stringify(u));
+})();
+</script>
+
+<div id="app" class="min-h-screen flex">
   <aside class="w-64 bg-white border-r border-slate-200 flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
     <div class="px-5 py-5 border-b border-slate-100 flex items-center gap-2.5">
       <div class="w-9 h-9 rounded-xl bg-brand-600 text-white font-display font-extrabold flex items-center justify-center">Z</div>
@@ -94,10 +113,10 @@ async function setStatus(id,status){try{await api("/orders/"+id,{method:"PATCH",
 async function loadProducts(){const data=await api("/products");document.getElementById("products-body").innerHTML=(data.products||[]).map(p=>`<tr><td class="px-4 py-3 font-medium">${p.emoji||""} ${p.name}</td><td class="px-4 py-3 text-slate-400">${p.sku}</td><td class="px-4 py-3">${p.cost_aed} AED</td><td class="px-4 py-3 ${p.stock<50?"text-amber-600 font-semibold":""}">${p.stock}</td><td class="px-4 py-3">${p.warehouse||"—"}</td></tr>`).join("")||`<tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">No products</td></tr>`}
 async function loadPayouts(){const data=await api("/payouts");document.getElementById("payouts-body").innerHTML=(data.payouts||[]).map(p=>`<tr><td class="px-4 py-3 font-mono text-xs">${p.id}</td><td class="px-4 py-3 text-xs">${p.user_id}</td><td class="px-4 py-3 font-semibold">${p.amount_aed} AED</td><td class="px-4 py-3">${p.status}</td><td class="px-4 py-3 text-xs text-slate-400">${p.batch_id||"—"}</td></tr>`).join("")||`<tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">No payouts yet</td></tr>`}
 async function runPayoutBatch(){try{const data=await api("/payouts/batch",{method:"POST",body:"{}"});document.getElementById("payout-msg").classList.remove("hidden");document.getElementById("payout-msg").textContent=`Batch ${data.batch_id}: ${data.seller_count} sellers · ${data.total_aed} AED`;loadPayouts()}catch(e){alert(e.message)}}
-function logout(){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.reload()}
-async function enterApp(){const u=currentUser();if(!u||u.role!=="admin"){alert("Admin account required");logout();return}document.getElementById("login-screen").classList.add("hidden");document.getElementById("app").classList.remove("hidden");document.getElementById("user-name").textContent=u.name||"Admin";document.getElementById("user-email").textContent=u.email||"";document.getElementById("avatar").textContent=(u.name||"A")[0].toUpperCase();try{await loadOverview()}catch(e){document.getElementById("api-status").textContent=e.message}}
-document.getElementById("login-form").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);const errEl=document.getElementById("login-error");errEl.classList.add("hidden");try{const data=await api("/auth/login",{method:"POST",body:JSON.stringify({email:fd.get("email"),password:fd.get("password")})});localStorage.setItem(TOKEN_KEY,data.token);localStorage.setItem(USER_KEY,JSON.stringify(data.user));enterApp()}catch(err){errEl.textContent=err.message;errEl.classList.remove("hidden")}});
-if(token()&&currentUser()?.role==="admin")enterApp();
+function logout(){localStorage.removeItem("zamrud_token_admin");localStorage.removeItem("zamrud_user_admin");localStorage.removeItem("zamrud_token");localStorage.removeItem("zamrud_user");location.href="login.html";}
+async function enterApp(){const u=currentUser();if(!u||u.role!=="admin"){alert("Admin account required");logout();return}document.getElementById("app").classList.remove("hidden");document.getElementById("user-name").textContent=u.name||"Admin";document.getElementById("user-email").textContent=u.email||"";document.getElementById("avatar").textContent=(u.name||"A")[0].toUpperCase();try{await loadOverview()}catch(e){document.getElementById("api-status").textContent=e.message}}
+localStorage.setItem(TOKEN_KEY,data.token);localStorage.setItem(USER_KEY,JSON.stringify(data.user));enterApp()}catch(err){errEl.textContent=err.message;errEl.classList.remove("hidden")}});
+enterApp();
 </script>
 </body>
 </html>
