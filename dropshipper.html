@@ -1,313 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zamrud Dropshipper Dashboard</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d9488'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='18' fill='white'%3EZ%3C/text%3E%3C/svg%3E" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: { 50:'#f0fdfa',100:'#ccfbf1',200:'#99f6e4',300:'#5eead4',400:'#2dd4bf',500:'#14b8a6',600:'#0d9488',700:'#0f766e',800:'#115e59',900:'#134e4a',950:'#042f2e' },
-            gold: { 400:'#fbbf24',500:'#f59e0b',600:'#d97706' }
-          },
-          fontFamily: { sans:['Inter','system-ui','sans-serif'], display:['Plus Jakarta Sans','Inter','sans-serif'] }
-        }
-      }
-    }
-  </script>
-  <style>
-    body { font-family: Inter, system-ui, sans-serif; }
-    .font-display { font-family: 'Plus Jakarta Sans', Inter, sans-serif; }
-    .sidebar-link.active { background: #f0fdfa; color: #0f766e; border-right: 3px solid #14b8a6; }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; animation: fade .25s ease; }
-    @keyframes fade { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-  </style>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Zamrud Dropshipper</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d9488'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='18' fill='white'%3EZ%3C/text%3E%3C/svg%3E"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"/>
+<script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdfa',100:'#ccfbf1',500:'#14b8a6',600:'#0d9488',700:'#0f766e'}},fontFamily:{sans:['Inter','system-ui'],display:['Plus Jakarta Sans','Inter']}}}}</script>
+<style>body{font-family:Inter,system-ui,sans-serif}.font-display{font-family:'Plus Jakarta Sans',Inter,sans-serif}.sidebar-link.active{background:#f0fdfa;color:#0f766e;border-right:3px solid #14b8a6}.tab-panel{display:none}.tab-panel.active{display:block}</style>
 </head>
 <body class="bg-slate-100 text-slate-800">
-  <div class="min-h-screen flex">
-    <aside class="w-64 bg-white border-r border-slate-200 flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
-      <div class="px-5 py-5 border-b border-slate-100 flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-800 text-white font-display font-extrabold flex items-center justify-center shadow-lg shadow-brand-500/30">Z</div>
-        <div>
-          <div class="font-display font-extrabold text-slate-900 leading-tight">Zamrud</div>
-          <div class="text-[10px] font-bold text-brand-600 uppercase tracking-wider">Dropshipper</div>
-        </div>
-      </div>
-      <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        <button onclick="showTab('overview')" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="overview"><i class="fas fa-chart-pie w-5 text-center"></i> Overview</button>
-        <button onclick="showTab('orders')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="orders"><i class="fas fa-shopping-bag w-5 text-center"></i> Orders</button>
-        <button onclick="showTab('products')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="products"><i class="fas fa-box w-5 text-center"></i> My Products</button>
-        <button onclick="showTab('catalog')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="catalog"><i class="fas fa-store w-5 text-center"></i> Catalog</button>
-        <button onclick="showTab('payouts')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="payouts"><i class="fas fa-wallet w-5 text-center"></i> Payouts</button>
-        <button onclick="showTab('stores')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="stores"><i class="fas fa-link w-5 text-center"></i> Stores</button>
-        <button onclick="showTab('settings')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50" data-tab="settings"><i class="fas fa-cog w-5 text-center"></i> Settings</button>
-      </nav>
-      <div class="p-3 border-t border-slate-100">
-        <div class="flex items-center gap-3 px-3 py-2">
-          <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold">AR</div>
-          <div class="min-w-0"><div class="text-sm font-semibold truncate">Ahmed Al-Rashid</div><div class="text-[11px] text-slate-400">ahmed@email.com</div></div>
-        </div>
-      </div>
-    </aside>
-
-    <main class="flex-1 min-w-0">
-      <header class="bg-white border-b border-slate-200 sticky top-0 z-20 px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <button class="lg:hidden p-2 rounded-lg hover:bg-slate-100" onclick="document.querySelector('aside').classList.toggle('hidden')"><i class="fas fa-bars"></i></button>
-          <div>
-            <h1 class="font-display font-extrabold text-slate-900 text-lg" id="page-title">Overview</h1>
-            <p class="text-xs text-slate-400">Your seller portal · Own inventory · Higher margins</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button class="px-3 py-1.5 text-xs font-medium bg-slate-100 rounded-lg text-slate-600">7 days</button>
-          <button class="px-3 py-1.5 text-xs font-medium bg-brand-50 text-brand-700 rounded-lg">30 days</button>
-        </div>
-      </header>
-
-      <div class="p-4 sm:p-6">
-        <!-- OVERVIEW -->
-        <div id="tab-overview" class="tab-panel active space-y-6">
-          <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Net Profit</div>
-              <div class="font-display text-2xl font-extrabold">4,280 AED</div>
-              <div class="text-xs text-green-600 mt-1">▲ 18% vs last period</div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Orders</div>
-              <div class="font-display text-2xl font-extrabold">147</div>
-              <div class="text-xs text-slate-400 mt-1">112 delivered · 18 pending</div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Delivery Rate</div>
-              <div class="font-display text-2xl font-extrabold">81%</div>
-              <div class="text-xs text-green-600 mt-1">Above platform avg (78%)</div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Available Balance</div>
-              <div class="font-display text-2xl font-extrabold text-brand-700">1,940 AED</div>
-              <div class="text-xs text-slate-400 mt-1">Next payout: Friday</div>
-            </div>
-          </div>
-
-          <div class="grid lg:grid-cols-5 gap-5">
-            <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <h3 class="font-semibold text-sm mb-4">Order Status</h3>
-              <div class="space-y-3">
-                <div><div class="flex justify-between text-sm mb-1"><span class="text-slate-600">Delivered</span><span class="font-medium">112</span></div><div class="h-2 bg-slate-100 rounded-full"><div class="h-full bg-green-500 rounded-full" style="width:76%"></div></div></div>
-                <div><div class="flex justify-between text-sm mb-1"><span class="text-slate-600">In Transit</span><span class="font-medium">18</span></div><div class="h-2 bg-slate-100 rounded-full"><div class="h-full bg-blue-500 rounded-full" style="width:12%"></div></div></div>
-                <div><div class="flex justify-between text-sm mb-1"><span class="text-slate-600">Pending Confirmation</span><span class="font-medium">9</span></div><div class="h-2 bg-slate-100 rounded-full"><div class="h-full bg-amber-500 rounded-full" style="width:6%"></div></div></div>
-                <div><div class="flex justify-between text-sm mb-1"><span class="text-slate-600">Returned</span><span class="font-medium">8</span></div><div class="h-2 bg-slate-100 rounded-full"><div class="h-full bg-red-400 rounded-full" style="width:5%"></div></div></div>
-              </div>
-            </div>
-            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <h3 class="font-semibold text-sm mb-4">Top Products</h3>
-              <div class="space-y-3">
-                <div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-lg">🎧</div><div class="flex-1 min-w-0"><div class="text-sm font-medium truncate">ANC Earbuds Pro</div><div class="text-xs text-slate-400">42 orders</div></div><div class="text-sm font-semibold text-brand-600">+1.2K</div></div>
-                <div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-lg">🧴</div><div class="flex-1 min-w-0"><div class="text-sm font-medium truncate">Vitamin C Serum</div><div class="text-xs text-slate-400">28 orders</div></div><div class="text-sm font-semibold text-brand-600">+890</div></div>
-                <div class="flex items-center gap-3"><div class="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-lg">💡</div><div class="flex-1 min-w-0"><div class="text-sm font-medium truncate">LED Strip Lights</div><div class="text-xs text-slate-400">21 orders</div></div><div class="text-sm font-semibold text-brand-600">+640</div></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-brand-50 border border-brand-100 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div class="font-semibold text-brand-900">Our own inventory = higher margins</div>
-              <div class="text-sm text-brand-700 mt-0.5">Every product is stocked by Zamrud in UAE warehouses. No third-party sellers.</div>
-            </div>
-            <button onclick="showTab('catalog')" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl">Browse Catalog</button>
-          </div>
-        </div>
-
-        <!-- ORDERS -->
-        <div id="tab-orders" class="tab-panel space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap gap-2">
-              <button class="px-3 py-1.5 text-xs font-medium bg-brand-600 text-white rounded-lg">All</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Pending</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Confirmed</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Shipped</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Delivered</button>
-              <button class="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 rounded-lg">Returned</button>
-            </div>
-            <button class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl"><i class="fas fa-plus text-xs mr-1"></i> New Order</button>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
-              <table class="w-full text-sm">
-                <thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase tracking-wide">
-                  <th class="px-4 py-3">Order ID</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Total</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Date</th>
-                </tr></thead>
-                <tbody class="divide-y divide-slate-50">
-                  <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">ZM-10482</td><td class="px-4 py-3">Fatima H.</td><td class="px-4 py-3">ANC Earbuds Pro</td><td class="px-4 py-3">129 AED</td><td class="px-4 py-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-700">Delivered</span></td><td class="px-4 py-3 text-slate-400">28 Oct</td></tr>
-                  <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">ZM-10481</td><td class="px-4 py-3">Omar K.</td><td class="px-4 py-3">Vitamin C Serum</td><td class="px-4 py-3">89 AED</td><td class="px-4 py-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-700">In Transit</span></td><td class="px-4 py-3 text-slate-400">28 Oct</td></tr>
-                  <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">ZM-10480</td><td class="px-4 py-3">Sara M.</td><td class="px-4 py-3">LED Strip Lights</td><td class="px-4 py-3">69 AED</td><td class="px-4 py-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-indigo-100 text-indigo-700">Confirmed</span></td><td class="px-4 py-3 text-slate-400">27 Oct</td></tr>
-                  <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">ZM-10479</td><td class="px-4 py-3">Hassan A.</td><td class="px-4 py-3">Smart Watch</td><td class="px-4 py-3">149 AED</td><td class="px-4 py-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-amber-100 text-amber-700">Pending</span></td><td class="px-4 py-3 text-slate-400">27 Oct</td></tr>
-                  <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">ZM-10478</td><td class="px-4 py-3">Noura B.</td><td class="px-4 py-3">Portable Blender</td><td class="px-4 py-3">99 AED</td><td class="px-4 py-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-700">Delivered</span></td><td class="px-4 py-3 text-slate-400">26 Oct</td></tr>
-                  <tr class="hover:bg-slate-50"><td class="px-4 py-3 font-medium text-brand-700">ZM-10477</td><td class="px-4 py-3">Youssef R.</td><td class="px-4 py-3">Car Vacuum</td><td class="px-4 py-3">109 AED</td><td class="px-4 py-3"><span class="text-xs font-medium px-2 py-1 rounded-full bg-red-100 text-red-700">Returned</span></td><td class="px-4 py-3 text-slate-400">26 Oct</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- MY PRODUCTS -->
-        <div id="tab-products" class="tab-panel space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="text-sm text-slate-500">Products you've listed · Sourced from Zamrud warehouses</p>
-            <button onclick="showTab('catalog')" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl"><i class="fas fa-plus text-xs mr-1"></i> Add from Catalog</button>
-          </div>
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="flex items-start gap-3">
-                <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-2xl">🎧</div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-semibold text-sm truncate">ANC Earbuds Pro</div>
-                  <div class="text-xs text-slate-400">Cost 45 · Your price 129</div>
-                  <div class="text-xs font-semibold text-brand-600 mt-1">+66 AED profit · 42 sold</div>
-                </div>
-              </div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="flex items-start gap-3">
-                <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-2xl">🧴</div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-semibold text-sm truncate">Vitamin C Serum</div>
-                  <div class="text-xs text-slate-400">Cost 28 · Your price 89</div>
-                  <div class="text-xs font-semibold text-brand-600 mt-1">+43 AED profit · 28 sold</div>
-                </div>
-              </div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="flex items-start gap-3">
-                <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-2xl">💡</div>
-                <div class="flex-1 min-w-0">
-                  <div class="font-semibold text-sm truncate">LED Strip Lights</div>
-                  <div class="text-xs text-slate-400">Cost 22 · Your price 69</div>
-                  <div class="text-xs font-semibold text-brand-600 mt-1">+29 AED profit · 21 sold</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CATALOG -->
-        <div id="tab-catalog" class="tab-panel space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h3 class="font-semibold">Zamrud Catalog</h3>
-              <p class="text-xs text-slate-500">Our own inventory · Higher profit margins</p>
-            </div>
-            <input type="text" placeholder="Search products..." class="px-3 py-2 text-sm border border-slate-200 rounded-xl w-full sm:w-64 outline-none focus:ring-2 focus:ring-brand-500" />
-          </div>
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="text-3xl mb-2">⌚</div>
-              <div class="font-semibold text-sm">Smart Watch Tracker</div>
-              <div class="text-xs text-slate-400 mb-2">Cost 55 AED · Suggested 149 AED</div>
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-brand-600">+76 profit</span><button class="text-xs font-semibold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg">Add</button></div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="text-3xl mb-2">📽️</div>
-              <div class="font-semibold text-sm">Mini Portable Projector</div>
-              <div class="text-xs text-slate-400 mb-2">Cost 89 AED · Suggested 249 AED</div>
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-brand-600">+142 profit</span><button class="text-xs font-semibold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg">Add</button></div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="text-3xl mb-2">🔊</div>
-              <div class="font-semibold text-sm">Bluetooth Speaker</div>
-              <div class="text-xs text-slate-400 mb-2">Cost 42 AED · Suggested 119 AED</div>
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-brand-600">+59 profit</span><button class="text-xs font-semibold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg">Add</button></div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="text-3xl mb-2">🧹</div>
-              <div class="font-semibold text-sm">Car Vacuum Cleaner</div>
-              <div class="text-xs text-slate-400 mb-2">Cost 38 AED · Suggested 109 AED</div>
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-brand-600">+53 profit</span><button class="text-xs font-semibold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg">Add</button></div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="text-3xl mb-2">🥤</div>
-              <div class="font-semibold text-sm">Portable Blender</div>
-              <div class="text-xs text-slate-400 mb-2">Cost 35 AED · Suggested 99 AED</div>
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-brand-600">+46 profit</span><button class="text-xs font-semibold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg">Add</button></div>
-            </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div class="text-3xl mb-2">🧘</div>
-              <div class="font-semibold text-sm">Yoga Mat Non-Slip</div>
-              <div class="text-xs text-slate-400 mb-2">Cost 24 AED · Suggested 69 AED</div>
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-brand-600">+27 profit</span><button class="text-xs font-semibold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg">Add</button></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PAYOUTS -->
-        <div id="tab-payouts" class="tab-panel space-y-4">
-          <div class="grid sm:grid-cols-3 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm"><div class="text-xs text-slate-500 mb-1">Available for payout</div><div class="font-display text-2xl font-extrabold text-brand-700">1,940 AED</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm"><div class="text-xs text-slate-500 mb-1">Pending (in transit)</div><div class="font-display text-2xl font-extrabold">680 AED</div></div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm"><div class="text-xs text-slate-500 mb-1">Total paid</div><div class="font-display text-2xl font-extrabold">28,450 AED</div></div>
-          </div>
-          <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-            <div class="px-5 py-4 border-b border-slate-100 font-semibold text-sm">Recent Payouts</div>
-            <div class="divide-y divide-slate-50 text-sm">
-              <div class="px-5 py-3.5 flex items-center justify-between"><div><div class="font-medium">Weekly Payout #48</div><div class="text-xs text-slate-400">25 Oct 2026 · Bank Transfer</div></div><div class="text-right"><div class="font-semibold text-green-600">+2,140 AED</div><div class="text-xs text-green-500">Completed</div></div></div>
-              <div class="px-5 py-3.5 flex items-center justify-between"><div><div class="font-medium">Weekly Payout #47</div><div class="text-xs text-slate-400">18 Oct 2026 · Bank Transfer</div></div><div class="text-right"><div class="font-semibold text-green-600">+1,890 AED</div><div class="text-xs text-green-500">Completed</div></div></div>
-              <div class="px-5 py-3.5 flex items-center justify-between"><div><div class="font-medium">Weekly Payout #46</div><div class="text-xs text-slate-400">11 Oct 2026 · Binance USDT</div></div><div class="text-right"><div class="font-semibold text-green-600">+2,310 AED</div><div class="text-xs text-green-500">Completed</div></div></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- STORES -->
-        <div id="tab-stores" class="tab-panel space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="text-sm text-slate-500">Connect Shopify, Salla, Zid or upload orders manually</p>
-            <button class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl"><i class="fas fa-plus text-xs mr-1"></i> Connect Store</button>
-          </div>
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-700 font-bold text-sm">S</div>
-                <div><div class="font-semibold">My UAE Store</div><div class="text-xs text-slate-400">Shopify · Connected</div></div>
-                <span class="ml-auto w-2.5 h-2.5 bg-green-500 rounded-full"></span>
-              </div>
-              <div class="text-xs text-slate-500">Auto-forward: <span class="text-green-600 font-medium">Enabled</span></div>
-            </div>
-            <div class="bg-white rounded-2xl border border-dashed border-slate-300 p-5 flex items-center justify-center text-slate-400 hover:border-brand-400 hover:text-brand-600 cursor-pointer transition">
-              <div class="text-center"><i class="fas fa-plus text-xl mb-2"></i><div class="text-sm font-medium">Add another store</div></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SETTINGS -->
-        <div id="tab-settings" class="tab-panel">
-          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm max-w-lg space-y-4">
-            <h3 class="font-semibold">Account Settings</h3>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Full Name</label><input type="text" value="Ahmed Al-Rashid" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500" /></div>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Email</label><input type="email" value="ahmed@email.com" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500" /></div>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">WhatsApp</label><input type="tel" value="+971 50 123 4567" class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500" /></div>
-            <div><label class="text-xs font-medium text-slate-500 mb-1.5 block">Payout Method</label><select class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500"><option>UAE Bank Transfer</option><option>Binance (USDT)</option><option>International SWIFT</option></select></div>
-            <button class="px-5 py-2.5 bg-brand-600 text-white text-sm font-bold rounded-xl">Save Changes</button>
-          </div>
-        </div>
-      </div>
-    </main>
+<div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl border shadow-lg p-8 w-full max-w-md">
+    <div class="text-center mb-6"><div class="w-12 h-12 mx-auto rounded-xl bg-brand-600 text-white font-display font-extrabold text-xl flex items-center justify-center mb-3">Z</div>
+    <h1 class="font-display font-extrabold text-xl">Zamrud Seller</h1><p class="text-sm text-slate-500">Dropshipper portal</p></div>
+    <form id="login-form" class="space-y-4">
+      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Email</label><input name="email" type="email" value="ahmed@email.com" required class="w-full px-3 py-2.5 text-sm border rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
+      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Password</label><input name="password" type="password" value="password123" required class="w-full px-3 py-2.5 text-sm border rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
+      <p id="login-error" class="text-sm text-red-600 hidden"></p>
+      <button class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl">Sign in</button>
+    </form>
   </div>
-  <script>
-    const titles = { overview:'Overview', orders:'Orders', products:'My Products', catalog:'Catalog', payouts:'Payouts', stores:'Stores', settings:'Settings' };
-    function showTab(id) {
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById('tab-' + id).classList.add('active');
-      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.toggle('active', l.dataset.tab === id));
-      document.getElementById('page-title').textContent = titles[id] || id;
-    }
-  </script>
+</div>
+<div id="app" class="min-h-screen flex hidden">
+  <aside class="w-64 bg-white border-r flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
+    <div class="px-5 py-5 border-b flex items-center gap-2.5"><div class="w-9 h-9 rounded-xl bg-brand-600 text-white font-display font-extrabold flex items-center justify-center">Z</div><div><div class="font-display font-extrabold">Zamrud</div><div class="text-[10px] font-bold text-brand-600 uppercase">Dropshipper</div></div></div>
+    <nav class="flex-1 p-3 space-y-0.5">
+      <button onclick="showTab('overview')" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="overview"><i class="fas fa-chart-pie w-5 text-center"></i> Overview</button>
+      <button onclick="showTab('orders')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="orders"><i class="fas fa-shopping-bag w-5 text-center"></i> Orders</button>
+      <button onclick="showTab('products')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="products"><i class="fas fa-box w-5 text-center"></i> My Products</button>
+      <button onclick="showTab('catalog')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="catalog"><i class="fas fa-store w-5 text-center"></i> Catalog</button>
+      <button onclick="showTab('payouts')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="payouts"><i class="fas fa-wallet w-5 text-center"></i> Payouts</button>
+    </nav>
+    <div class="p-3 border-t"><div class="flex items-center gap-3 px-3 py-2"><div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold" id="avatar">D</div><div class="min-w-0 flex-1"><div class="text-sm font-semibold truncate" id="user-name">Seller</div><div class="text-[11px] text-slate-400" id="user-email"></div></div><button onclick="logout()" class="text-slate-400 hover:text-red-500"><i class="fas fa-sign-out-alt"></i></button></div></div>
+  </aside>
+  <main class="flex-1 min-w-0">
+    <header class="bg-white border-b sticky top-0 z-20 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3"><button class="lg:hidden p-2" onclick="document.querySelector('aside').classList.toggle('hidden');document.querySelector('aside').classList.toggle('flex')"><i class="fas fa-bars"></i></button><h1 class="font-display font-extrabold text-lg" id="page-title">Overview</h1></div>
+    </header>
+    <div class="p-4 sm:p-6">
+      <div id="tab-overview" class="tab-panel active space-y-4">
+        <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="bg-white rounded-2xl border p-5"><div class="text-xs text-slate-500 uppercase mb-2">Net Profit</div><div class="font-display text-2xl font-extrabold text-brand-700" id="stat-profit">—</div></div>
+          <div class="bg-white rounded-2xl border p-5"><div class="text-xs text-slate-500 uppercase mb-2">Orders</div><div class="font-display text-2xl font-extrabold" id="stat-orders">—</div></div>
+          <div class="bg-white rounded-2xl border p-5"><div class="text-xs text-slate-500 uppercase mb-2">Delivered</div><div class="font-display text-2xl font-extrabold" id="stat-delivered">—</div></div>
+          <div class="bg-white rounded-2xl border p-5"><div class="text-xs text-slate-500 uppercase mb-2">Pending</div><div class="font-display text-2xl font-extrabold text-amber-600" id="stat-pending">—</div></div>
+        </div>
+      </div>
+      <div id="tab-orders" class="tab-panel space-y-4">
+        <div class="flex justify-end"><button onclick="showNewOrder()" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl">+ New Order</button></div>
+        <div id="new-order-form" class="hidden bg-white rounded-2xl border p-4 space-y-3 max-w-lg">
+          <select id="no-product" class="w-full px-3 py-2 text-sm border rounded-xl"></select>
+          <input id="no-name" placeholder="Customer name" class="w-full px-3 py-2 text-sm border rounded-xl"/>
+          <input id="no-phone" placeholder="Phone +971..." class="w-full px-3 py-2 text-sm border rounded-xl"/>
+          <input id="no-city" placeholder="City" class="w-full px-3 py-2 text-sm border rounded-xl"/>
+          <input id="no-price" type="number" placeholder="Sell price AED" class="w-full px-3 py-2 text-sm border rounded-xl"/>
+          <button onclick="createOrder()" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl">Create</button>
+        </div>
+        <div class="bg-white rounded-2xl border overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Total</th><th class="px-4 py-3">Profit</th><th class="px-4 py-3">Status</th></tr></thead><tbody id="orders-body" class="divide-y"></tbody></table></div></div>
+      </div>
+      <div id="tab-products" class="tab-panel"><div id="my-products" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>
+      <div id="tab-catalog" class="tab-panel"><div id="catalog-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>
+      <div id="tab-payouts" class="tab-panel"><div class="bg-white rounded-2xl border overflow-hidden"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">ID</th><th class="px-4 py-3">Amount</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Date</th></tr></thead><tbody id="payouts-body" class="divide-y"></tbody></table></div></div>
+    </div>
+  </main>
+</div>
+<script>
+const API="https://zamrud.borntow2.workers.dev";
+const TOKEN_KEY="zamrud_token_drop"; const USER_KEY="zamrud_user_drop";
+function token(){return localStorage.getItem(TOKEN_KEY)}
+function currentUser(){try{return JSON.parse(localStorage.getItem(USER_KEY)||"null")}catch{return null}}
+async function api(path,opts={}){const headers={"Content-Type":"application/json",...(opts.headers||{})};if(token())headers.Authorization="Bearer "+token();const res=await fetch(API+path,{...opts,headers});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||res.statusText);return data}
+function showTab(id){document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));document.getElementById("tab-"+id).classList.add("active");document.querySelectorAll(".sidebar-link").forEach(l=>l.classList.toggle("active",l.dataset.tab===id));document.getElementById("page-title").textContent={overview:"Overview",orders:"Orders",products:"My Products",catalog:"Catalog",payouts:"Payouts"}[id];if(id==="orders")loadOrders();if(id==="products")loadMyProducts();if(id==="catalog")loadCatalog();if(id==="payouts")loadPayouts()}
+async function loadOverview(){const data=await api("/stats");const s=data.stats||{};document.getElementById("stat-profit").textContent=(s.profit!=null?Number(s.profit).toLocaleString():0)+" AED";document.getElementById("stat-orders").textContent=s.total_orders??0;document.getElementById("stat-delivered").textContent=s.delivered??0;document.getElementById("stat-pending").textContent=s.pending??0}
+async function loadOrders(){const data=await api("/orders");document.getElementById("orders-body").innerHTML=(data.orders||[]).map(o=>`<tr><td class="px-4 py-3 font-medium text-brand-700">${o.order_number}</td><td class="px-4 py-3">${o.customer_name}</td><td class="px-4 py-3">${o.product_name}</td><td class="px-4 py-3">${o.sell_price_aed} AED</td><td class="px-4 py-3 text-brand-600 font-semibold">+${o.profit_aed}</td><td class="px-4 py-3">${o.status}</td></tr>`).join("")||`<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">No orders</td></tr>`}
+function showNewOrder(){document.getElementById("new-order-form").classList.toggle("hidden");loadCatalogSelect()}
+async function loadCatalogSelect(){const data=await api("/products");const sel=document.getElementById("no-product");sel.innerHTML=(data.products||[]).map(p=>`<option value="${p.id}" data-price="${p.suggested_price_aed}">${p.name} · cost ${p.cost_aed}</option>`).join("");if(data.products?.[0])document.getElementById("no-price").value=data.products[0].suggested_price_aed;sel.onchange=()=>{document.getElementById("no-price").value=sel.selectedOptions[0].dataset.price}}
+async function createOrder(){try{await api("/orders",{method:"POST",body:JSON.stringify({product_id:document.getElementById("no-product").value,customer_name:document.getElementById("no-name").value,customer_phone:document.getElementById("no-phone").value,customer_city:document.getElementById("no-city").value,sell_price_aed:Number(document.getElementById("no-price").value)})});document.getElementById("new-order-form").classList.add("hidden");loadOrders();loadOverview()}catch(e){alert(e.message)}}
+async function loadMyProducts(){const data=await api("/me/products");document.getElementById("my-products").innerHTML=(data.products||[]).map(p=>`<div class="bg-white rounded-2xl border p-4"><div class="text-2xl mb-1">${p.emoji||"📦"}</div><div class="font-semibold text-sm">${p.name}</div><div class="text-xs text-slate-400">Cost ${p.cost_aed} · Sell ${p.sell_price_aed}</div><div class="text-xs font-semibold text-brand-600 mt-1">+${(p.sell_price_aed-p.cost_aed-18).toFixed(0)} profit est.</div></div>`).join("")||`<p class="text-slate-400 text-sm">No products yet — add from Catalog</p>`}
+async function loadCatalog(){const data=await api("/products");document.getElementById("catalog-grid").innerHTML=(data.products||[]).map(p=>`<div class="bg-white rounded-2xl border p-4"><div class="text-2xl mb-1">${p.emoji||"📦"}</div><div class="font-semibold text-sm">${p.name}</div><div class="text-xs text-slate-400 mb-2">Cost ${p.cost_aed} · Suggested ${p.suggested_price_aed} · Stock ${p.stock}</div><button onclick="addProduct('${p.id}',${p.suggested_price_aed})" class="text-xs font-semibold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg">Add to my list</button></div>`).join("")}
+async function addProduct(id,price){try{await api("/me/products",{method:"POST",body:JSON.stringify({product_id:id,sell_price_aed:price})});alert("Added");showTab("products")}catch(e){alert(e.message)}}
+async function loadPayouts(){const data=await api("/payouts");document.getElementById("payouts-body").innerHTML=(data.payouts||[]).map(p=>`<tr><td class="px-4 py-3 font-mono text-xs">${p.id}</td><td class="px-4 py-3 font-semibold">${p.amount_aed} AED</td><td class="px-4 py-3">${p.status}</td><td class="px-4 py-3 text-slate-400">${(p.created_at||"").slice(0,10)}</td></tr>`).join("")||`<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">No payouts yet</td></tr>`}
+function logout(){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.reload()}
+async function enterApp(){const u=currentUser();if(!u||u.role!=="dropshipper"){alert("Dropshipper account required");logout();return}document.getElementById("login-screen").classList.add("hidden");document.getElementById("app").classList.remove("hidden");document.getElementById("user-name").textContent=u.name;document.getElementById("user-email").textContent=u.email;document.getElementById("avatar").textContent=(u.name||"D")[0].toUpperCase();await loadOverview()}
+document.getElementById("login-form").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);const errEl=document.getElementById("login-error");errEl.classList.add("hidden");try{const data=await api("/auth/login",{method:"POST",body:JSON.stringify({email:fd.get("email"),password:fd.get("password")})});localStorage.setItem(TOKEN_KEY,data.token);localStorage.setItem(USER_KEY,JSON.stringify(data.user));enterApp()}catch(err){errEl.textContent=err.message;errEl.classList.remove("hidden")}});
+if(token()&&currentUser()?.role==="dropshipper")enterApp();
+</script>
 </body>
 </html>
