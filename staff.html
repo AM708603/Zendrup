@@ -44,6 +44,7 @@
     <nav class="flex-1 p-3 space-y-0.5">
       <button onclick="showTab('queue')" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="queue"><i class="fas fa-list-check w-5 text-center"></i> My Queue</button>
       <button onclick="showTab('orders')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="orders"><i class="fas fa-shopping-bag w-5 text-center"></i> Orders</button>
+      <button onclick="showTab('products')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="products"><i class="fas fa-boxes-stacked w-5 text-center"></i> Inventory</button>
     </nav>
     <div class="p-3 border-t"><div class="flex items-center gap-3 px-3 py-2"><div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold" id="avatar">S</div><div class="min-w-0 flex-1"><div class="text-sm font-semibold truncate" id="user-name">Staff</div><div class="text-[11px] text-slate-400" id="user-email"></div></div><button onclick="logout()" class="text-slate-400 hover:text-red-500"><i class="fas fa-sign-out-alt"></i></button></div></div>
   </aside>
@@ -63,6 +64,29 @@
       </div>
       <div id="tab-orders" class="tab-panel space-y-4">
         <div class="bg-white rounded-2xl border overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Phone</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Action</th></tr></thead><tbody id="orders-body" class="divide-y"></tbody></table></div></div>
+      </div>
+
+      <div id="tab-products" class="tab-panel space-y-4">
+        <div class="flex justify-between items-center">
+          <p class="text-sm text-slate-500">Update stock and product details</p>
+          <button onclick="document.getElementById('staff-product-form').classList.toggle('hidden')" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl">+ Add product</button>
+        </div>
+        <div id="staff-product-form" class="hidden bg-white rounded-2xl border p-4 space-y-3 max-w-2xl">
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input id="spf-name" placeholder="Name *" class="px-3 py-2 text-sm border rounded-xl"/>
+            <input id="spf-sku" placeholder="SKU *" class="px-3 py-2 text-sm border rounded-xl"/>
+            <input id="spf-cost" type="number" placeholder="Cost AED *" class="px-3 py-2 text-sm border rounded-xl"/>
+            <input id="spf-price" type="number" placeholder="Suggested price *" class="px-3 py-2 text-sm border rounded-xl"/>
+            <input id="spf-stock" type="number" placeholder="Stock" value="0" class="px-3 py-2 text-sm border rounded-xl"/>
+            <select id="spf-category" class="px-3 py-2 text-sm border rounded-xl"><option>Mobile</option><option>Beauty</option><option>Home</option><option>Sports</option><option>Car</option><option>Toys</option><option>Other</option></select>
+            <input id="spf-image" type="file" accept="image/*" class="text-sm sm:col-span-2"/>
+          </div>
+          <button onclick="staffSaveProduct()" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl">Save</button>
+        </div>
+        <div class="bg-white rounded-2xl border overflow-hidden">
+          <table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Product</th><th class="px-4 py-3">SKU</th><th class="px-4 py-3">Stock</th><th class="px-4 py-3">Update stock</th></tr></thead>
+          <tbody id="staff-products-body" class="divide-y"></tbody></table>
+        </div>
       </div>
     </div>
   </main>
@@ -110,9 +134,10 @@ function showTab(id) {
   document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
   document.getElementById("tab-" + id).classList.add("active");
   document.querySelectorAll(".sidebar-link").forEach(function (l) { l.classList.toggle("active", l.dataset.tab === id); });
-  document.getElementById("page-title").textContent = id === "queue" ? "My Queue" : "Orders";
+  document.getElementById("page-title").textContent = ({ queue: "My Queue", orders: "Orders", products: "Inventory" })[id] || id;
   if (id === "orders") loadOrders();
   if (id === "queue") loadTasks();
+  if (id === "products") loadStaffProducts();
 }
 
 async function loadTasks() {
