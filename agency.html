@@ -44,6 +44,7 @@
     <nav class="flex-1 p-3 space-y-0.5">
       <button onclick="showTab('overview')" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="overview"><i class="fas fa-chart-pie w-5 text-center"></i> Overview</button>
       <button onclick="showTab('orders')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="orders"><i class="fas fa-shopping-bag w-5 text-center"></i> Client Orders</button>
+      <button onclick="showTab('catalog')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="catalog"><i class="fas fa-store w-5 text-center"></i> Catalog</button>
       <button onclick="showTab('payouts')" class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600" data-tab="payouts"><i class="fas fa-coins w-5 text-center"></i> Commission</button>
     </nav>
     <div class="p-3 border-t"><div class="flex items-center gap-3 px-3 py-2"><div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold" id="avatar">A</div><div class="min-w-0 flex-1"><div class="text-sm font-semibold truncate" id="user-name">Agency</div><div class="text-[11px] text-slate-400" id="user-email"></div></div><button onclick="logout()" class="text-slate-400 hover:text-red-500"><i class="fas fa-sign-out-alt"></i></button></div></div>
@@ -64,6 +65,44 @@
       </div>
       <div id="tab-orders" class="tab-panel"><div class="bg-white rounded-2xl border overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Total</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Date</th></tr></thead><tbody id="orders-body" class="divide-y"></tbody></table></div></div></div>
       <div id="tab-payouts" class="tab-panel"><div class="bg-white rounded-2xl border overflow-hidden"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">ID</th><th class="px-4 py-3">Amount</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Date</th></tr></thead><tbody id="payouts-body" class="divide-y"></tbody></table></div></div>
+
+      <div id="tab-catalog" class="tab-panel space-y-4">
+        <div class="flex flex-col lg:flex-row gap-4">
+          <aside class="lg:w-56 flex-shrink-0 space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
+              <input id="search-input" type="search" placeholder="Search name or SKU..." oninput="filterCatalog()" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/>
+              <div>
+                <div class="text-xs font-semibold text-slate-500 mb-2">Category</div>
+                <div class="space-y-1.5">
+                  <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="filter-cat rounded text-brand-600" value="Mobile" onchange="filterCatalog()"/> Mobile</label>
+                  <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="filter-cat rounded text-brand-600" value="Beauty" onchange="filterCatalog()"/> Beauty</label>
+                  <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="filter-cat rounded text-brand-600" value="Home" onchange="filterCatalog()"/> Home</label>
+                  <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="filter-cat rounded text-brand-600" value="Sports" onchange="filterCatalog()"/> Sports</label>
+                  <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="filter-cat rounded text-brand-600" value="Car" onchange="filterCatalog()"/> Car</label>
+                  <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="filter-cat rounded text-brand-600" value="Toys" onchange="filterCatalog()"/> Toys</label>
+                </div>
+              </div>
+              <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="filter-instock" checked onchange="filterCatalog()" class="rounded text-brand-600"/> In stock only</label>
+              <button type="button" onclick="resetCatalogFilters()" class="text-xs text-brand-600 font-semibold">Reset filters</button>
+            </div>
+          </aside>
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <p class="text-sm text-slate-500"><span id="product-count">0</span> products · Own UAE inventory</p>
+              <select id="sort-select" onchange="filterCatalog()" class="text-sm border border-slate-200 rounded-xl px-3 py-2">
+                <option value="popular">Popular</option>
+                <option value="profit-desc">Highest profit</option>
+                <option value="price-asc">Cost: low to high</option>
+                <option value="price-desc">Cost: high to low</option>
+                <option value="newest">Newest</option>
+              </select>
+            </div>
+            <div id="catalog-grid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            <div id="empty-state" class="hidden text-center py-16 text-slate-400 text-sm">No products match your filters</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 </div>
@@ -110,9 +149,10 @@ function showTab(id) {
   document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
   document.getElementById("tab-" + id).classList.add("active");
   document.querySelectorAll(".sidebar-link").forEach(function (l) { l.classList.toggle("active", l.dataset.tab === id); });
-  var titles = { overview: "Overview", orders: "Client Orders", payouts: "Commission" };
+  var titles = { overview: "Overview", orders: "Client Orders", catalog: "Catalog", payouts: "Commission" };
   document.getElementById("page-title").textContent = titles[id] || id;
   if (id === "orders") loadOrders();
+  if (id === "catalog") loadCatalog();
   if (id === "payouts") loadPayouts();
 }
 
@@ -137,6 +177,109 @@ async function loadPayouts() {
   document.getElementById("payouts-body").innerHTML = (data.payouts || []).map(function (p) {
     return '<tr><td class="px-4 py-3 font-mono text-xs">' + p.id + '</td><td class="px-4 py-3 font-semibold">' + p.amount_aed + ' AED</td><td class="px-4 py-3">' + p.status + '</td><td class="px-4 py-3 text-slate-400">' + (p.created_at || "").slice(0, 10) + "</td></tr>";
   }).join("") || '<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">No commission payouts yet</td></tr>';
+}
+
+
+var catalogProducts = [];
+
+function mapCatalogProduct(p) {
+  var cost = Number(p.cost_aed) || 0;
+  var suggested = Number(p.suggested_price_aed) || 0;
+  return {
+    id: p.id,
+    name: p.name,
+    category: p.category || "Other",
+    cost: cost,
+    suggested: suggested,
+    profit: suggested - cost - 18,
+    stock: Number(p.stock) || 0,
+    tag: p.tag || null,
+    emoji: p.emoji || "📦",
+    sku: p.sku || "",
+    image_key: p.image_key || null
+  };
+}
+
+function catalogCard(p) {
+  var tagBadge = p.tag === "hot" ? '<span class="absolute top-2 left-2 text-white text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-500">HOT</span>'
+    : p.tag === "new" ? '<span class="absolute top-2 left-2 text-white text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-600">NEW</span>'
+    : p.tag === "high-margin" ? '<span class="absolute top-2 left-2 text-white text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500">HIGH $</span>'
+    : "";
+  var media = p.image_key
+    ? '<img src="' + API + "/images/" + p.image_key + '" class="w-full h-full object-cover" alt=""/>'
+    : '<span class="text-5xl">' + (p.emoji || "📦") + "</span>";
+  var action = "";
+  if (typeof addProduct === "function") {
+    action = '<button onclick="event.stopPropagation();addProduct(\'' + p.id + "'," + p.suggested + ')" class="mt-3 w-full py-2 text-xs font-bold bg-brand-50 text-brand-700 rounded-xl">Add to my list</button>';
+  }
+  return (
+    '<div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition">' +
+    '<div class="relative bg-gradient-to-b from-slate-50 to-slate-100 h-40 flex items-center justify-center overflow-hidden">' +
+    tagBadge + media +
+    (p.stock < 100 ? '<span class="absolute top-2 right-2 bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full">Low Stock</span>' : "") +
+    "</div><div class=\"p-4\">" +
+    '<div class="text-xs text-slate-400 mb-1">' + (p.category || "") + (p.sku ? " · " + p.sku : "") + "</div>" +
+    '<h3 class="font-semibold text-sm text-slate-800 leading-snug mb-2 line-clamp-2">' + p.name + "</h3>" +
+    '<div class="flex items-end justify-between"><div><div class="text-xs text-slate-400">Our cost</div><div class="font-bold">' + p.cost + ' AED</div></div>' +
+    '<div class="text-right"><div class="text-xs text-slate-400">Your profit</div><div class="font-bold text-brand-600">+' + p.profit + " AED</div></div></div>" +
+    '<div class="mt-3 pt-3 border-t border-slate-100 flex justify-between text-xs text-slate-400"><span>Sell at: ' + p.suggested + " AED</span>" +
+    '<span class="text-green-600 font-medium">' + p.stock + " in stock</span></div>" + action +
+    "</div></div>"
+  );
+}
+
+function filterCatalog() {
+  var search = (document.getElementById("search-input") && document.getElementById("search-input").value || "").toLowerCase();
+  var cats = Array.prototype.map.call(document.querySelectorAll(".filter-cat:checked"), function (c) { return c.value; });
+  var inStock = document.getElementById("filter-instock") ? document.getElementById("filter-instock").checked : false;
+  var sort = document.getElementById("sort-select") ? document.getElementById("sort-select").value : "popular";
+  var filtered = catalogProducts.filter(function (p) {
+    if (search && p.name.toLowerCase().indexOf(search) === -1 && (p.sku || "").toLowerCase().indexOf(search) === -1) return false;
+    if (cats.length && cats.indexOf(p.category) === -1) return false;
+    if (inStock && p.stock <= 0) return false;
+    return true;
+  });
+  filtered = filtered.slice();
+  if (sort === "profit-desc") filtered.sort(function (a, b) { return b.profit - a.profit; });
+  else if (sort === "price-asc") filtered.sort(function (a, b) { return a.cost - b.cost; });
+  else if (sort === "price-desc") filtered.sort(function (a, b) { return b.cost - a.cost; });
+  else if (sort === "newest") filtered.sort(function (a, b) { return String(b.id).localeCompare(String(a.id)); });
+  else filtered.sort(function (a, b) { return b.stock - a.stock; });
+
+  var grid = document.getElementById("catalog-grid");
+  var empty = document.getElementById("empty-state");
+  var count = document.getElementById("product-count");
+  if (count) count.textContent = filtered.length;
+  if (!grid) return;
+  if (!filtered.length) {
+    grid.innerHTML = "";
+    if (empty) empty.classList.remove("hidden");
+  } else {
+    if (empty) empty.classList.add("hidden");
+    grid.innerHTML = filtered.map(catalogCard).join("");
+  }
+}
+
+function resetCatalogFilters() {
+  var s = document.getElementById("search-input");
+  if (s) s.value = "";
+  document.querySelectorAll(".filter-cat").forEach(function (c) { c.checked = false; });
+  var instock = document.getElementById("filter-instock");
+  if (instock) instock.checked = true;
+  var sort = document.getElementById("sort-select");
+  if (sort) sort.value = "popular";
+  filterCatalog();
+}
+
+async function loadCatalog() {
+  try {
+    var data = await api("/products");
+    catalogProducts = (data.products || []).map(mapCatalogProduct);
+  } catch (e) {
+    catalogProducts = [];
+    console.error(e);
+  }
+  filterCatalog();
 }
 
 async function enterApp() {
