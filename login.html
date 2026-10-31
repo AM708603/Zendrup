@@ -147,14 +147,24 @@
       dropshipper: "dropshipper.html"
     };
 
+    function showVerify(email) {
+      window._verifyEmail = email;
+      document.getElementById("verify-email-label").textContent = email;
+      switchMode("verify");
+    }
+
     function switchMode(mode) {
-      const isLogin = mode === "login";
-      document.getElementById("panel-login").classList.toggle("hidden", !isLogin);
-      document.getElementById("panel-register").classList.toggle("hidden", isLogin);
+      document.getElementById("panel-login").classList.toggle("hidden", mode !== "login");
+      document.getElementById("panel-register").classList.toggle("hidden", mode !== "register");
+      var vp = document.getElementById("panel-verify");
+      if (vp) vp.classList.toggle("hidden", mode !== "verify");
+      var tabRow = document.getElementById("auth-tabs");
+      if (tabRow) tabRow.classList.toggle("hidden", mode === "verify");
+      var isLogin = mode === "login";
       document.getElementById("tab-login").className = isLogin
         ? "flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow text-slate-900 transition"
         : "flex-1 py-2.5 text-sm font-semibold rounded-lg text-slate-500 transition";
-      document.getElementById("tab-register").className = !isLogin
+      document.getElementById("tab-register").className = !isLogin && mode === "register"
         ? "flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow text-slate-900 transition"
         : "flex-1 py-2.5 text-sm font-semibold rounded-lg text-slate-500 transition";
     }
@@ -200,6 +210,10 @@
           body: JSON.stringify({ email: fd.get("email"), password: fd.get("password") })
         });
         const data = await res.json();
+        if (res.status === 403 && data.need_verification) {
+          showVerify(data.email || fd.get("email"));
+          throw new Error(data.error || "Verify your email first");
+        }
         if (!res.ok) throw new Error(data.error || "Login failed");
         saveSession(data.token, data.user);
         redirectByRole(data.user.role);
@@ -238,15 +252,23 @@
           })
         });
         const data = await res.json().catch(() => ({}));
-        if (res.ok && data.token) {
+        if (!res.ok) throw new Error(data.error || "Registration failed");
+        if (data.need_verification) {
+          if (data.dev_code) {
+            ok.textContent = "Dev mode code: " + data.dev_code;
+            ok.classList.remove("hidden");
+          }
+          showVerify(data.email || fd.get("email"));
+          btn.disabled = false;
+          btn.textContent = "Create free account";
+          return;
+        }
+        if (data.token) {
           saveSession(data.token, data.user);
           redirectByRole(data.user.role);
           return;
         }
-        if (res.status === 404 || res.status === 405) {
-          throw new Error(data.error || "Registration failed. Try again or contact support.");
-        }
-        throw new Error(data.error || "Registration failed");
+        throw new Error(data.message || "Registration failed");
       } catch (ex) {
         if (ex.message.includes("Failed to fetch")) {
           err.textContent = "Could not reach API. Check your connection.";
@@ -258,6 +280,58 @@
         btn.textContent = "Create free account";
       }
     });
+
+    
+    document.getElementById("verify-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const err = document.getElementById("verify-error");
+      const ok = document.getElementById("verify-ok");
+      const btn = document.getElementById("verify-btn");
+      err.classList.add("hidden");
+      ok.classList.add("hidden");
+      btn.disabled = true;
+      btn.textContent = "Verifying…";
+      try {
+        const code = new FormData(e.target).get("code");
+        const res = await fetch(API + "/auth/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: window._verifyEmail, code })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Verification failed");
+        ok.textContent = data.message || "Verified! You can log in.";
+        ok.classList.remove("hidden");
+        setTimeout(() => switchMode("login"), 800);
+      } catch (ex) {
+        err.textContent = ex.message;
+        err.classList.remove("hidden");
+      }
+      btn.disabled = false;
+      btn.textContent = "Verify & continue";
+    });
+
+    async function resendCode() {
+      const err = document.getElementById("verify-error");
+      const ok = document.getElementById("verify-ok");
+      err.classList.add("hidden");
+      ok.classList.add("hidden");
+      try {
+        const res = await fetch(API + "/auth/resend-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: window._verifyEmail })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Could not resend");
+        ok.textContent = data.dev_code ? ("Dev code: " + data.dev_code) : (data.message || "Code resent");
+        ok.classList.remove("hidden");
+      } catch (ex) {
+        err.textContent = ex.message;
+        err.classList.remove("hidden");
+      }
+    }
+
 
     // Open register tab if ?register=1 or #register
     if (location.search.includes("register") || location.hash === "#register") {
