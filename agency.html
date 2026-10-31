@@ -11,19 +11,41 @@
 <style>body{font-family:Inter,system-ui,sans-serif}.font-display{font-family:'Plus Jakarta Sans',Inter,sans-serif}.sidebar-link.active{background:#f0fdfa;color:#0f766e;border-right:3px solid #14b8a6}.tab-panel{display:none}.tab-panel.active{display:block}</style>
 </head>
 <body class="bg-slate-100 text-slate-800">
-<div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl border shadow-lg p-8 w-full max-w-md">
-    <div class="text-center mb-6"><div class="w-12 h-12 mx-auto rounded-xl bg-brand-600 text-white font-display font-extrabold text-xl flex items-center justify-center mb-3">Z</div>
-    <h1 class="font-display font-extrabold text-xl">Zamrud Agency</h1><p class="text-sm text-slate-500">Partner portal</p></div>
-    <form id="login-form" class="space-y-4">
-      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Email</label><input name="email" type="email" value="agency@growthlab.ae" required class="w-full px-3 py-2.5 text-sm border rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
-      <div><label class="text-xs font-medium text-slate-500 mb-1 block">Password</label><input name="password" type="password" value="password123" required class="w-full px-3 py-2.5 text-sm border rounded-xl outline-none focus:ring-2 focus:ring-brand-500"/></div>
-      <p id="login-error" class="text-sm text-red-600 hidden"></p>
-      <button class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl">Sign in</button>
-    </form>
-  </div>
-</div>
-<div id="app" class="min-h-screen flex hidden">
+
+<script>
+(function(){
+  const API = "https://zamrud.borntow2.workers.dev";
+  const TOKEN_KEY = "zamrud_token_agency";
+  const USER_KEY = "zamrud_user_agency";
+  const REQUIRED_ROLES = ['agency'];
+
+  function token(){ return localStorage.getItem(TOKEN_KEY) || localStorage.getItem("zamrud_token"); }
+  function currentUser(){
+    try {
+      return JSON.parse(localStorage.getItem(USER_KEY) || localStorage.getItem("zamrud_user") || "null");
+    } catch { return null; }
+  }
+
+  // If not logged in with correct role, go to unified login
+  const u = currentUser();
+  const tok = token();
+  if (!tok || !u || !REQUIRED_ROLES.includes(u.role)) {
+    // clear stale role keys
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    location.replace("login.html");
+    return;
+  }
+
+  // Sync shared keys for consistency
+  localStorage.setItem(TOKEN_KEY, tok);
+  localStorage.setItem(USER_KEY, JSON.stringify(u));
+  if (localStorage.getItem("zamrud_token") !== tok) localStorage.setItem("zamrud_token", tok);
+  localStorage.setItem("zamrud_user", JSON.stringify(u));
+})();
+</script>
+
+<div id="app" class="min-h-screen flex">
   <aside class="w-64 bg-white border-r flex-shrink-0 hidden lg:flex flex-col sticky top-0 h-screen">
     <div class="px-5 py-5 border-b flex items-center gap-2.5"><div class="w-9 h-9 rounded-xl bg-brand-600 text-white font-display font-extrabold flex items-center justify-center">Z</div><div><div class="font-display font-extrabold">Zamrud</div><div class="text-[10px] font-bold text-violet-600 uppercase">Agency</div></div></div>
     <nav class="flex-1 p-3 space-y-0.5">
@@ -62,10 +84,10 @@ function showTab(id){document.querySelectorAll(".tab-panel").forEach(p=>p.classL
 async function loadOverview(){const data=await api("/stats");const s=data.stats||{};document.getElementById("stat-gmv").textContent=(s.gmv!=null?Number(s.gmv).toLocaleString():0)+" AED";document.getElementById("stat-orders").textContent=s.total_orders??0;document.getElementById("stat-delivered").textContent=s.delivered??0;document.getElementById("stat-profit").textContent=(s.client_profit!=null?Number(s.client_profit).toLocaleString():0)+" AED"}
 async function loadOrders(){const data=await api("/orders");document.getElementById("orders-body").innerHTML=(data.orders||[]).map(o=>`<tr><td class="px-4 py-3 font-medium text-brand-700">${o.order_number}</td><td class="px-4 py-3">${o.customer_name}</td><td class="px-4 py-3">${o.product_name}</td><td class="px-4 py-3">${o.sell_price_aed} AED</td><td class="px-4 py-3">${o.status}</td><td class="px-4 py-3 text-slate-400">${(o.created_at||"").slice(0,10)}</td></tr>`).join("")||`<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">No client orders yet</td></tr>`}
 async function loadPayouts(){const data=await api("/payouts");document.getElementById("payouts-body").innerHTML=(data.payouts||[]).map(p=>`<tr><td class="px-4 py-3 font-mono text-xs">${p.id}</td><td class="px-4 py-3 font-semibold">${p.amount_aed} AED</td><td class="px-4 py-3">${p.status}</td><td class="px-4 py-3 text-slate-400">${(p.created_at||"").slice(0,10)}</td></tr>`).join("")||`<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">No commission payouts yet</td></tr>`}
-function logout(){localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(USER_KEY);location.reload()}
-async function enterApp(){const u=currentUser();if(!u||u.role!=="agency"){alert("Agency account required");logout();return}document.getElementById("login-screen").classList.add("hidden");document.getElementById("app").classList.remove("hidden");document.getElementById("user-name").textContent=u.name;document.getElementById("user-email").textContent=u.email;document.getElementById("avatar").textContent=(u.name||"A")[0].toUpperCase();await loadOverview()}
-document.getElementById("login-form").addEventListener("submit",async e=>{e.preventDefault();const fd=new FormData(e.target);const errEl=document.getElementById("login-error");errEl.classList.add("hidden");try{const data=await api("/auth/login",{method:"POST",body:JSON.stringify({email:fd.get("email"),password:fd.get("password")})});localStorage.setItem(TOKEN_KEY,data.token);localStorage.setItem(USER_KEY,JSON.stringify(data.user));enterApp()}catch(err){errEl.textContent=err.message;errEl.classList.remove("hidden")}});
-if(token()&&currentUser()?.role==="agency")enterApp();
+function logout(){localStorage.removeItem("zamrud_token_agency");localStorage.removeItem("zamrud_user_agency");localStorage.removeItem("zamrud_token");localStorage.removeItem("zamrud_user");location.href="login.html";}
+async function enterApp(){const u=currentUser();if(!u||u.role!=="agency"){alert("Agency account required");logout();return}document.getElementById("app").classList.remove("hidden");document.getElementById("user-name").textContent=u.name;document.getElementById("user-email").textContent=u.email;document.getElementById("avatar").textContent=(u.name||"A")[0].toUpperCase();await loadOverview()}
+localStorage.setItem(TOKEN_KEY,data.token);localStorage.setItem(USER_KEY,JSON.stringify(data.user));enterApp()}catch(err){errEl.textContent=err.message;errEl.classList.remove("hidden")}});
+enterApp();
 </script>
 </body>
 </html>
