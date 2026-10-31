@@ -86,15 +86,7 @@
               Log in
             </button>
           </form>
-          <div class="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
-            <p class="text-xs font-semibold text-slate-500 mb-2">Demo accounts (password: password123)</p>
-            <div class="grid grid-cols-2 gap-2 text-xs text-slate-600">
-              <button type="button" onclick="fillDemo('admin@zamrud.ae')" class="text-left hover:text-brand-700">admin@zamrud.ae</button>
-              <button type="button" onclick="fillDemo('staff@zamrud.ae')" class="text-left hover:text-brand-700">staff@zamrud.ae</button>
-              <button type="button" onclick="fillDemo('agency@growthlab.ae')" class="text-left hover:text-brand-700">agency@growthlab.ae</button>
-              <button type="button" onclick="fillDemo('ahmed@email.com')" class="text-left hover:text-brand-700">ahmed@email.com</button>
-            </div>
-          </div>
+
         </div>
 
         <!-- REGISTER -->
@@ -165,12 +157,6 @@
       document.getElementById("tab-register").className = !isLogin
         ? "flex-1 py-2.5 text-sm font-bold rounded-lg bg-white shadow text-slate-900 transition"
         : "flex-1 py-2.5 text-sm font-semibold rounded-lg text-slate-500 transition";
-    }
-
-    function fillDemo(email) {
-      const form = document.getElementById("login-form");
-      form.email.value = email;
-      form.password.value = "password123";
     }
 
     function saveSession(token, user) {
@@ -258,7 +244,7 @@
           return;
         }
         if (res.status === 404 || res.status === 405) {
-          throw new Error("Registration API not enabled yet. Use a demo login for now, or ask admin to add your account.");
+          throw new Error(data.error || "Registration failed. Try again or contact support.");
         }
         throw new Error(data.error || "Registration failed");
       } catch (ex) {
