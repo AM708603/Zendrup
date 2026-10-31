@@ -80,10 +80,55 @@
       <div id="tab-orders" class="tab-panel space-y-4">
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Order</th><th class="px-4 py-3">Customer</th><th class="px-4 py-3">Product</th><th class="px-4 py-3">Total</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Date</th><th class="px-4 py-3">Action</th></tr></thead><tbody id="orders-body" class="divide-y divide-slate-50"></tbody></table></div></div>
       </div>
+      
       <div id="tab-products" class="tab-panel space-y-4">
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Product</th><th class="px-4 py-3">SKU</th><th class="px-4 py-3">Cost</th><th class="px-4 py-3">Stock</th><th class="px-4 py-3">Warehouse</th></tr></thead><tbody id="products-body" class="divide-y divide-slate-50"></tbody></table></div>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm text-slate-500">Own inventory · Add real products to the catalog</p>
+          <div class="flex gap-2">
+            <button onclick="clearProducts()" class="px-3 py-2 text-xs font-semibold text-red-600 border border-red-200 rounded-xl">Clear all</button>
+            <button onclick="toggleProductForm()" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl"><i class="fas fa-plus text-xs mr-1"></i> Add product</button>
+          </div>
+        </div>
+        <div id="product-form" class="hidden bg-white rounded-2xl border border-slate-200 p-5 space-y-3">
+          <h3 class="font-semibold text-sm" id="product-form-title">New product</h3>
+          <input type="hidden" id="pf-id" value="" />
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div><label class="text-xs text-slate-500 mb-1 block">Name *</label><input id="pf-name" class="w-full px-3 py-2 text-sm border rounded-xl" placeholder="Product name"/></div>
+            <div><label class="text-xs text-slate-500 mb-1 block">SKU *</label><input id="pf-sku" class="w-full px-3 py-2 text-sm border rounded-xl" placeholder="ZM-XXX-001"/></div>
+            <div><label class="text-xs text-slate-500 mb-1 block">Category</label>
+              <select id="pf-category" class="w-full px-3 py-2 text-sm border rounded-xl">
+                <option>Mobile</option><option>Beauty</option><option>Home</option><option>Sports</option><option>Car</option><option>Toys</option><option>Other</option>
+              </select>
+            </div>
+            <div><label class="text-xs text-slate-500 mb-1 block">Warehouse</label>
+              <select id="pf-warehouse" class="w-full px-3 py-2 text-sm border rounded-xl"><option value="dubai">Dubai</option><option value="sharjah">Sharjah</option></select>
+            </div>
+            <div><label class="text-xs text-slate-500 mb-1 block">Cost (AED) *</label><input id="pf-cost" type="number" step="0.01" class="w-full px-3 py-2 text-sm border rounded-xl"/></div>
+            <div><label class="text-xs text-slate-500 mb-1 block">Suggested price (AED) *</label><input id="pf-price" type="number" step="0.01" class="w-full px-3 py-2 text-sm border rounded-xl"/></div>
+            <div><label class="text-xs text-slate-500 mb-1 block">Stock</label><input id="pf-stock" type="number" value="0" class="w-full px-3 py-2 text-sm border rounded-xl"/></div>
+            <div><label class="text-xs text-slate-500 mb-1 block">Tag</label>
+              <select id="pf-tag" class="w-full px-3 py-2 text-sm border rounded-xl"><option value="">None</option><option value="hot">Hot</option><option value="new">New</option><option value="high-margin">High margin</option></select>
+            </div>
+            <div><label class="text-xs text-slate-500 mb-1 block">Emoji</label><input id="pf-emoji" value="📦" class="w-full px-3 py-2 text-sm border rounded-xl"/></div>
+            <div><label class="text-xs text-slate-500 mb-1 block">Image</label><input id="pf-image" type="file" accept="image/*" class="w-full text-sm"/></div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="saveProduct()" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl">Save product</button>
+            <button onclick="toggleProductForm(false)" class="px-4 py-2 text-sm border rounded-xl">Cancel</button>
+          </div>
+          <p id="pf-msg" class="text-sm hidden"></p>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">Product</th><th class="px-4 py-3">SKU</th><th class="px-4 py-3">Cost</th><th class="px-4 py-3">Suggest</th><th class="px-4 py-3">Stock</th><th class="px-4 py-3">Warehouse</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Actions</th></tr></thead>
+              <tbody id="products-body" class="divide-y divide-slate-50"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div id="tab-payouts" class="tab-panel space-y-4">
+
+        <div id="tab-payouts" class="tab-panel space-y-4">
         <div class="flex justify-between items-center"><p class="text-sm text-slate-500">Weekly payout batches</p><button onclick="runPayoutBatch()" class="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-xl">Process Friday Batch</button></div>
         <div id="payout-msg" class="text-sm text-brand-700 hidden"></div>
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden"><table class="w-full text-sm"><thead><tr class="bg-slate-50 text-left text-xs text-slate-500 uppercase"><th class="px-4 py-3">ID</th><th class="px-4 py-3">User</th><th class="px-4 py-3">Amount</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Batch</th></tr></thead><tbody id="payouts-body" class="divide-y divide-slate-50"></tbody></table></div>
@@ -181,13 +226,114 @@ async function setStatus(id, status) {
   }
 }
 
+
+function toggleProductForm(show) {
+  var el = document.getElementById("product-form");
+  if (show === false) { el.classList.add("hidden"); return; }
+  el.classList.toggle("hidden");
+  if (!el.classList.contains("hidden") && !document.getElementById("pf-id").value) {
+    document.getElementById("product-form-title").textContent = "New product";
+    document.getElementById("pf-id").value = "";
+    document.getElementById("pf-name").value = "";
+    document.getElementById("pf-sku").value = "";
+    document.getElementById("pf-cost").value = "";
+    document.getElementById("pf-price").value = "";
+    document.getElementById("pf-stock").value = "0";
+    document.getElementById("pf-emoji").value = "📦";
+  }
+}
+
 async function loadProducts() {
-  var data = await api("/products");
-  var rows = (data.products || []).map(function (p) {
-    return '<tr><td class="px-4 py-3 font-medium">' + (p.emoji || "") + " " + p.name + '</td><td class="px-4 py-3 text-slate-400">' + p.sku + '</td><td class="px-4 py-3">' + p.cost_aed + ' AED</td><td class="px-4 py-3">' + p.stock + '</td><td class="px-4 py-3">' + (p.warehouse || "—") + "</td></tr>";
-  }).join("") || '<tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">No products</td></tr>';
+  var data = await api("/admin/products?all=1");
+  window._products = data.products || [];
+  var rows = window._products.map(function (p, i) {
+    var img = p.image_key ? ('<img src="' + API + '/images/' + p.image_key + '" class="w-8 h-8 rounded object-cover inline-block mr-2"/>') : (p.emoji || '');
+    return '<tr><td class="px-4 py-3 font-medium">' + img + ' ' + p.name + '</td><td class="px-4 py-3 text-slate-400">' + p.sku + '</td><td class="px-4 py-3">' + p.cost_aed + ' AED</td><td class="px-4 py-3">' + p.suggested_price_aed + ' AED</td><td class="px-4 py-3">' + p.stock + '</td><td class="px-4 py-3">' + (p.warehouse || '—') + '</td><td class="px-4 py-3">' + p.status + '</td><td class="px-4 py-3 space-x-2"><button onclick="editProductAt(' + i + ')" class="text-xs text-brand-600 font-semibold">Edit</button><button onclick="deleteProduct(\'' + p.id + '\')" class="text-xs text-red-600 font-semibold">Archive</button></td></tr>';
+  }).join("") || '<tr><td colspan="8" class="px-4 py-8 text-center text-slate-400">No products yet — add your first product</td></tr>';
   document.getElementById("products-body").innerHTML = rows;
 }
+
+function editProductAt(i) { var p = window._products[i]; editProduct(p); }
+function editProduct(p) {
+  document.getElementById("product-form").classList.remove("hidden");
+  document.getElementById("product-form-title").textContent = "Edit product";
+  document.getElementById("pf-id").value = p.id;
+  document.getElementById("pf-name").value = p.name || "";
+  document.getElementById("pf-sku").value = p.sku || "";
+  document.getElementById("pf-category").value = p.category || "Other";
+  document.getElementById("pf-warehouse").value = p.warehouse || "dubai";
+  document.getElementById("pf-cost").value = p.cost_aed;
+  document.getElementById("pf-price").value = p.suggested_price_aed;
+  document.getElementById("pf-stock").value = p.stock;
+  document.getElementById("pf-tag").value = p.tag || "";
+  document.getElementById("pf-emoji").value = p.emoji || "📦";
+}
+
+async function fileToBase64(file) {
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function () { resolve(reader.result); };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function saveProduct() {
+  var msg = document.getElementById("pf-msg");
+  msg.classList.remove("hidden");
+  msg.textContent = "Saving…";
+  try {
+    var image_key = null;
+    var fileInput = document.getElementById("pf-image");
+    if (fileInput.files && fileInput.files[0]) {
+      var b64 = await fileToBase64(fileInput.files[0]);
+      var up = await api("/upload", { method: "POST", body: JSON.stringify({ data: b64, content_type: fileInput.files[0].type }) });
+      image_key = up.key;
+    }
+    var payload = {
+      name: document.getElementById("pf-name").value,
+      sku: document.getElementById("pf-sku").value,
+      category: document.getElementById("pf-category").value,
+      warehouse: document.getElementById("pf-warehouse").value,
+      cost_aed: Number(document.getElementById("pf-cost").value),
+      suggested_price_aed: Number(document.getElementById("pf-price").value),
+      stock: Number(document.getElementById("pf-stock").value),
+      tag: document.getElementById("pf-tag").value || null,
+      emoji: document.getElementById("pf-emoji").value || "📦"
+    };
+    if (image_key) payload.image_key = image_key;
+    var id = document.getElementById("pf-id").value;
+    if (id) {
+      await api("/products/" + id, { method: "PATCH", body: JSON.stringify(payload) });
+    } else {
+      await api("/products", { method: "POST", body: JSON.stringify(payload) });
+    }
+    msg.className = "text-sm text-green-600";
+    msg.textContent = "Saved";
+    toggleProductForm(false);
+    loadProducts();
+  } catch (e) {
+    msg.className = "text-sm text-red-600";
+    msg.textContent = e.message;
+  }
+}
+
+async function deleteProduct(id) {
+  if (!confirm("Archive this product?")) return;
+  try {
+    await api("/products/" + id, { method: "DELETE" });
+    loadProducts();
+  } catch (e) { alert(e.message); }
+}
+
+async function clearProducts() {
+  if (!confirm("Delete ALL products from the catalog? This cannot be undone.")) return;
+  try {
+    await api("/products/clear", { method: "POST", body: "{}" });
+    loadProducts();
+  } catch (e) { alert(e.message); }
+}
+
 
 async function loadPayouts() {
   var data = await api("/payouts");
